@@ -230,7 +230,7 @@ export default Ember.Component.extend(ClusterDriver, {
   session:        service(),
   /* !!!!!!!!!!!DO NOT CHANGE END!!!!!!!!!!!*/
   intl:           service(),
-  linode:         service(),
+  civo:         service(),
 
   driverName:     '%%DRIVERNAME%%',
   configField:    '%%DRIVERNAME%%EngineConfig',
@@ -339,9 +339,9 @@ export default Ember.Component.extend(ClusterDriver, {
         cb(false);
       } else {
         hash({
-          regions: this.linode.request(auth, 'regions'),
-          nodeTypes: this.linode.request(auth, 'linode/types'),
-          k8sVersions: this.linode.request(auth, 'lke/versions'),
+          regions: this.civo.request(auth, 'regions'),
+          nodeTypes: this.civo.request(auth, 'linode/types'),
+          k8sVersions: this.civo.request(auth, 'lke/versions'),
         }).then((responses) => {
           this.setProperties({
             errors: [],
