@@ -9,53 +9,11 @@
   }}
 
   <div class="row">
-    <div class="col span-6 mb-0">
-      <label class="acc-label">{{t 'clusterNew.civo.tenancyOCID.label'}}{{field-required}}</label>
-      {{#input-or-display editable=(eq mode "new") value=cluster.okeEngineConfig.tenancyId}}
-      {{input type="text" name="tenancy" classNames="form-control" placeholder=(t 'clusterNew.civo.tenancyOCID.placeholder') value=cluster.okeEngineConfig.tenancyId}}
-      {{/input-or-display}}
-    </div>
-
-
-    <div class="col span-6 mb-0">
-      <label class="acc-label">{{t 'clusterNew.civo.compartmentOCID.label'}}{{field-required}}</label>
-      {{#input-or-display editable=(eq mode "new") value=cluster.okeEngineConfig.compartmentId}}
-      {{input type="text" name="compartment" classNames="form-control" placeholder=(t 'clusterNew.civo.compartmentOCID.placeholder') value=cluster.okeEngineConfig.compartmentId}}
-      {{/input-or-display}}
-    </div>
 
     <div class="col span-6">
-      <label class="acc-label">{{t 'clusterNew.civo.region.label'}}{{field-required}}</label>
-      {{#input-or-display editable=(eq mode "new") value=selectedRegion}}
-      {{searchable-select class="form-control"
-                            content=regionChoices
-                            value=cluster.okeEngineConfig.region
-        }}
-      {{/input-or-display}}
-    </div>
-
-  </div>
-
-  <div class="row">
-
-    <div class="col span-6">
-      <label class="acc-label">{{t 'clusterNew.civo.userOcid.label'}}{{field-required}}</label>
-      {{#input-or-display editable=(or (eq mode "new") eq mode "editing") value=cluster.okeEngineConfig.userOcid}}
-      {{input type="text" name="username" classNames="form-control" placeholder=(t 'clusterNew.civo.userOcid.placeholder') value=cluster.okeEngineConfig.userOcid}}
-      {{/input-or-display}}
-    </div>
-
-    <div class="col span-6">
-      <label class="acc-label">{{t 'clusterNew.civo.userFingerprint.label'}}{{field-required}}</label>
-      {{#input-or-display editable=(or (eq mode "new") eq mode "editing") value=cluster.okeEngineConfig.fingerprint}}
-      {{input type="text" name="fingerprint" classNames="form-control" placeholder=(t 'clusterNew.civo.userFingerprint.placeholder') value=cluster.okeEngineConfig.fingerprint}}
-      {{/input-or-display}}
-    </div>
-
-    <div class="col span-6">
-      <label class="acc-label">{{t 'clusterNew.civo.secretKeyPassphrase.label'}}</label>
-      {{#input-or-display editable=(or (eq mode "new") eq mode "editing") value=cluster.okeEngineConfig.privateKeyPassphrase}}
-      {{input type="password" name="password" classNames="form-control" concealValue=true placeholder=(t 'clusterNew.civo.secretKeyPassphrase.placeholder') value=cluster.okeEngineConfig.privateKeyPassphrase}}
+      <label class="acc-label">{{t 'clusterNew.civo.apiKey.label'}}{{field-required}}</label>
+      {{#input-or-display editable=(or (eq mode "new") eq mode "editing") value=cluster.civoEngineConfig.apiKey}}
+      {{input type="text" name="apiKey" classNames="form-control" placeholder=(t 'clusterNew.civo.apiKey.placeholder') value=cluster.civoEngineConfig.apiKey}}
       {{/input-or-display}}
     </div>
 
@@ -67,7 +25,7 @@
     </div>
     {{input-text-file
         classNames="box"
-        value=cluster.okeEngineConfig.privateKeyContents
+        value=cluster.civoEngineConfig.privateKeyContents
         multiple=False
         canChangeName=false
         accept="text/plain,.pem,.pkey,.key"
@@ -106,7 +64,7 @@
       {{#input-or-display editable=(or (eq mode "new") eq mode "editing") value=selectedk8sVersion}}
       {{new-select class="form-control"
                            content=k8sUpgradeVersionChoices
-                           value=cluster.okeEngineConfig.kubernetesVersion
+                           value=cluster.civoEngineConfig.kubernetesVersion
               }}
       {{/input-or-display}}
     </div>
@@ -114,8 +72,8 @@
 
     <div class="col span-4">
       <label class="acc-label">{{t 'clusterNew.civo.quantityPerSubnet.label'}}</label>
-      {{#input-or-display editable=(or (eq mode "new") eq mode "editing") value=cluster.okeEngineConfig.quantityPerSubnet}}
-      {{input-integer min=1 max=maxNodeCount value=cluster.okeEngineConfig.quantityPerSubnet classNames="form-control" placeholder=(t 'clusterNew.civo.quantityPerSubnet.placeholder')}}
+      {{#input-or-display editable=(or (eq mode "new") eq mode "editing") value=cluster.civoEngineConfig.quantityPerSubnet}}
+      {{input-integer min=1 max=maxNodeCount value=cluster.civoEngineConfig.quantityPerSubnet classNames="form-control" placeholder=(t 'clusterNew.civo.quantityPerSubnet.placeholder')}}
       <p class="help-block">
         {{t 'clusterNew.civo.quantityPerSubnet.help'}}
       </p>
@@ -150,15 +108,15 @@
       {{#input-or-display editable=(and (eq step 2) isNew) value=selectedk8sVersion}}
       {{new-select class="form-control"
                            content=k8sVersionChoices
-                           value=cluster.okeEngineConfig.kubernetesVersion
+                           value=cluster.civoEngineConfig.kubernetesVersion
               }}
       {{/input-or-display}}
     </div>
 
     <div class="col span-6 mb-0">
       <label class="acc-label">{{t 'clusterNew.civo.quantityPerSubnet.label'}}</label>
-      {{#input-or-display editable=(and (eq step 2) isNew) value=cluster.okeEngineConfig.quantityPerSubnet}}
-      {{input-integer min=1 max=maxNodeCount value=cluster.okeEngineConfig.quantityPerSubnet classNames="form-control" placeholder=(t 'clusterNew.civo.quantityPerSubnet.placeholder')}}
+      {{#input-or-display editable=(and (eq step 2) isNew) value=cluster.civoEngineConfig.quantityPerSubnet}}
+      {{input-integer min=1 max=maxNodeCount value=cluster.civoEngineConfig.quantityPerSubnet classNames="form-control" placeholder=(t 'clusterNew.civo.quantityPerSubnet.placeholder')}}
       <p class="help-block">
         {{t 'clusterNew.civo.quantityPerSubnet.help'}}
       </p>
@@ -231,15 +189,15 @@
           {{#input-or-display editable=(and (eq step 3) isNew) value=selectedSubnet}}
           {{searchable-select class="form-control"
                 content=subnetAccessChoices
-                value=cluster.okeEngineConfig.subnetAccess
+                value=cluster.civoEngineConfig.subnetAccess
               }}
           {{/input-or-display}}
         </div>
 
         <div class="col span-6">
           <label class="acc-label">{{t 'clusterNew.civo.cidr.label'}}</label>
-          {{#input-or-display editable=(and (eq step 3) isNew) value=cluster.okeEngineConfig.vcnCidr}}
-          {{input type="text" classNames="form-control" placeholder=(t 'clusterNew.civo.cidr.placeholder') value=cluster.okeEngineConfig.vcnCidr}}
+          {{#input-or-display editable=(and (eq step 3) isNew) value=cluster.civoEngineConfig.vcnCidr}}
+          {{input type="text" classNames="form-control" placeholder=(t 'clusterNew.civo.cidr.placeholder') value=cluster.civoEngineConfig.vcnCidr}}
           {{/input-or-display}}
         </div>
       </div>
@@ -249,31 +207,31 @@
       <div class="row">
         <div class="col span-6">
           <label class="acc-label">{{t 'clusterNew.civo.existingVCNDetails.compartmentOCID'}}</label>
-          {{#input-or-display editable=(and (eq step 3) isNew) value=cluster.okeEngineConfig.vcnCompartmentId}}
-          {{input type="text" classNames="form-control" placeholder=(t 'clusterNew.civo.existingVCNDetails.compartmentOCIDPlaceholder') value=cluster.okeEngineConfig.vcnCompartmentId}}
+          {{#input-or-display editable=(and (eq step 3) isNew) value=cluster.civoEngineConfig.vcnCompartmentId}}
+          {{input type="text" classNames="form-control" placeholder=(t 'clusterNew.civo.existingVCNDetails.compartmentOCIDPlaceholder') value=cluster.civoEngineConfig.vcnCompartmentId}}
           <p class="help-block">{{t "clusterNew.civo.existingVCNDetails.compartmentOCIDHelp" }}</p>
           {{/input-or-display}}
         </div>
 
         <div class="col span-6">
           <label class="acc-label">{{t 'clusterNew.civo.existingVCNDetails.vcnName'}}{{field-required}}</label>
-          {{#input-or-display editable=(and (eq step 3) isNew) value=cluster.okeEngineConfig.vcnName}}
-          {{input type="text" classNames="form-control" placeholder=(t 'clusterNew.civo.existingVCNDetails.vcnNamePlaceholder') value=cluster.okeEngineConfig.vcnName}}
+          {{#input-or-display editable=(and (eq step 3) isNew) value=cluster.civoEngineConfig.vcnName}}
+          {{input type="text" classNames="form-control" placeholder=(t 'clusterNew.civo.existingVCNDetails.vcnNamePlaceholder') value=cluster.civoEngineConfig.vcnName}}
           {{/input-or-display}}
         </div>
       </div>
       <div class="row">
         <div class="col span-6">
           <label class="acc-label">{{t 'clusterNew.civo.existingVCNDetails.lbSubnetName1'}}{{field-required}}</label>
-          {{#input-or-display editable=(and (eq step 3) isNew) value=cluster.okeEngineConfig.loadBalancerSubnetName1}}
-          {{input type="text" classNames="form-control" placeholder=(t 'clusterNew.civo.existingVCNDetails.lbSubnetName1Placeholder') value=cluster.okeEngineConfig.loadBalancerSubnetName1}}
+          {{#input-or-display editable=(and (eq step 3) isNew) value=cluster.civoEngineConfig.loadBalancerSubnetName1}}
+          {{input type="text" classNames="form-control" placeholder=(t 'clusterNew.civo.existingVCNDetails.lbSubnetName1Placeholder') value=cluster.civoEngineConfig.loadBalancerSubnetName1}}
           {{/input-or-display}}
         </div>
 
         <div class="col span-6">
           <label class="acc-label">{{t 'clusterNew.civo.existingVCNDetails.lbSubnetName2'}}</label>
-          {{#input-or-display editable=(and (eq step 3) isNew) value=cluster.okeEngineConfig.loadBalancerSubnetName2}}
-          {{input type="text" classNames="form-control" placeholder=(t 'clusterNew.civo.existingVCNDetails.lbSubnetName2Placeholder') value=cluster.okeEngineConfig.loadBalancerSubnetName2}}
+          {{#input-or-display editable=(and (eq step 3) isNew) value=cluster.civoEngineConfig.loadBalancerSubnetName2}}
+          {{input type="text" classNames="form-control" placeholder=(t 'clusterNew.civo.existingVCNDetails.lbSubnetName2Placeholder') value=cluster.civoEngineConfig.loadBalancerSubnetName2}}
           {{/input-or-display}}
         </div>
 
@@ -312,7 +270,7 @@
         {{#input-or-display editable=(and (eq step 4) isNew) value=selectednodeShape}}
         {{searchable-select class="form-control"
                                     content=nodeShapeChoices
-                                    value=cluster.okeEngineConfig.nodeShape
+                                    value=cluster.civoEngineConfig.nodeShape
                 }}
         {{/input-or-display}}
       </div>
@@ -322,7 +280,7 @@
         {{#input-or-display editable=isNew value=selectedImage}}
         {{searchable-select class="form-control"
                                     content=imageChoices
-                                    value=cluster.okeEngineConfig.nodeImage
+                                    value=cluster.civoEngineConfig.nodeImage
                 }}
         {{/input-or-display}}
       </div>
@@ -336,7 +294,7 @@
       </div>
       {{input-text-file
         classNames="box"
-        value=cluster.okeEngineConfig.nodePublicKeyContents
+        value=cluster.civoEngineConfig.nodePublicKeyContents
         multiple=False
         canChangeName=false
         accept="text/plain,.pem,.pub,.key"

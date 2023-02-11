@@ -96,16 +96,13 @@ const languages = {
           'title':   'OCI Account Configuration',
           'detail':  'Choose the region and API Key that will be used to authenticate and configure Oracle Container Engine.'
         },
-        'secretKey': {
-          'label':       'User Private Key',
-          'placeholder': 'The private API key contents for the specified OCI user, in PEM format',
-          'provided':    'Provided',
-          'required':    'User Private API Key is required'
-        },
-        'secretKeyPassphrase': {
-          'label':       'User Private Key Passphrase',
-          'placeholder': 'The passphrase (if any) that protects private key file the specified OCI user',
-          'provided':    'Provided'
+        'apiKey': {
+          'next': 'Proceed to Cluster Configuration',
+          'loading': 'Verifying your API key',
+          'title': 'Civo API Key',
+          "required": "API key is required",
+          "placeholder": "The API key to use for accessing your Civo account",
+          'description': 'Provide us with the API key that will be used to access your Civo account'
         },
         'cluster': {
           'title':   'Cluster Configuration',
