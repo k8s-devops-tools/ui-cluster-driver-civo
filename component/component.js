@@ -92,17 +92,15 @@ const languages = {
       'civo': {
         'access': {
           'next':    'Next: Authenticate & Configure Cluster',
-          'loading': 'Loading values from Oracle Cloud Infrastructure',
-          'title':   'OCI Account Configuration',
+          'loading': 'Loading values from Civo',
+          'title':   'Civo Account Configuration',
           'detail':  'Choose the region and API Key that will be used to authenticate and configure Oracle Container Engine.'
         },
         'apiKey': {
           'next': 'Proceed to Cluster Configuration',
-          'loading': 'Verifying your API key',
-          'title': 'Civo API Key',
-          "required": "API key is required",
-          "placeholder": "The API key to use for accessing your Civo account",
-          'description': 'Provide us with the API key that will be used to access your Civo account'
+          'label':       'API key is required',
+          'placeholder': 'The API key to use for accessing your Civo account',
+          'required':    'API key is required'
         },
         'cluster': {
           'title':   'Cluster Configuration',
