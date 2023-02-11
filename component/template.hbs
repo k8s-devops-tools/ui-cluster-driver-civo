@@ -1,371 +1,364 @@
 <section class="horizontal-form">
-
-  {{#accordion-list showExpandAll=false as | al expandFn |}}
-  {{#accordion-list-item title=accessTitle
-    detail=accessDetail
-    expandAll=expandAll
-    expand=(action expandFn)
-    expandOnInit=true
-  }}
-
-  <div class="row">
-    <div class="col span-6 mb-0">
-      <label class="acc-label">{{t 'clusterNew.civo.tenancyOCID.label'}}{{field-required}}</label>
-      {{#input-or-display editable=(eq mode "new") value=cluster.civoEngineConfig.tenancyId}}
-      {{input type="text" name="tenancy" classNames="form-control" placeholder=(t 'clusterNew.civo.tenancyOCID.placeholder') value=cluster.civoEngineConfig.tenancyId}}
-      {{/input-or-display}}
-    </div>
-
-
-    <div class="col span-6 mb-0">
-      <label class="acc-label">{{t 'clusterNew.civo.compartmentOCID.label'}}{{field-required}}</label>
-      {{#input-or-display editable=(eq mode "new") value=cluster.civoEngineConfig.compartmentId}}
-      {{input type="text" name="compartment" classNames="form-control" placeholder=(t 'clusterNew.civo.compartmentOCID.placeholder') value=cluster.civoEngineConfig.compartmentId}}
-      {{/input-or-display}}
-    </div>
-
-    <div class="col span-6">
-      <label class="acc-label">{{t 'clusterNew.civo.region.label'}}{{field-required}}</label>
-      {{#input-or-display editable=(eq mode "new") value=selectedRegion}}
-      {{searchable-select class="form-control"
-                            content=regionChoices
-                            value=cluster.civoEngineConfig.region
-        }}
-      {{/input-or-display}}
-    </div>
-
-  </div>
-
-  <div class="row">
-
-    <div class="col span-6">
-      <label class="acc-label">{{t 'clusterNew.civo.userOcid.label'}}{{field-required}}</label>
-      {{#input-or-display editable=(or (eq mode "new") eq mode "editing") value=cluster.civoEngineConfig.userOcid}}
-      {{input type="text" name="username" classNames="form-control" placeholder=(t 'clusterNew.civo.userOcid.placeholder') value=cluster.civoEngineConfig.userOcid}}
-      {{/input-or-display}}
-    </div>
-
-    <div class="col span-6">
-      <label class="acc-label">{{t 'clusterNew.civo.userFingerprint.label'}}{{field-required}}</label>
-      {{#input-or-display editable=(or (eq mode "new") eq mode "editing") value=cluster.civoEngineConfig.fingerprint}}
-      {{input type="text" name="fingerprint" classNames="form-control" placeholder=(t 'clusterNew.civo.userFingerprint.placeholder') value=cluster.civoEngineConfig.fingerprint}}
-      {{/input-or-display}}
-    </div>
-
-    <div class="col span-6">
-      <label class="acc-label">{{t 'clusterNew.civo.secretKeyPassphrase.label'}}</label>
-      {{#input-or-display editable=(or (eq mode "new") eq mode "editing") value=cluster.civoEngineConfig.privateKeyPassphrase}}
-      {{input type="password" name="password" classNames="form-control" concealValue=true placeholder=(t 'clusterNew.civo.secretKeyPassphrase.placeholder') value=cluster.civoEngineConfig.privateKeyPassphrase}}
-      {{/input-or-display}}
-    </div>
-
-  </div>
-  <div class="row">
-
-    <div class="col span-6">
-      <label class="acc-label pt-5">{{t "clusterNew.civo.secretKey.label"}}{{field-required}}</label>
-    </div>
-    {{input-text-file
-        classNames="box"
-        value=cluster.civoEngineConfig.privateKeyContents
-        multiple=False
-        canChangeName=false
-        accept="text/plain,.pem,.pkey,.key"
-        minHeight=40
-        placeholder="clusterNew.civo.secretKey.placeholder"
-        shouldChangeName=false
-        concealValue=true
+  {{#accordion-list showExpandAll=false as |al expandFn|}}
+    {{#if (eq step 1)}}
+      {{#accordion-list-itemcivoEngineConfig
+        title=apiKeyTitle
+        detail=apiKeyDetail
+        expandAll=expandAll
+        expand=(action expandFn)
+        expandOnInit=true
       }}
-    
-  </div>
-  {{/accordion-list-item}}
-
-
-  {{#if (and refresh (eq step 1))}}
-  {{save-cancel editing=(eq mode 'edit')
-        save="authenticateOCI"
+        <div class="row">
+          <div class="col span-12">
+            <label class="acc-label">
+              {{t "clusterNew.civo.apiKey.title"}}
+              {{field-required}}
+            </label>
+            {{#input-or-display
+              editable=true
+              value=cluster.civoEngineConfig.apiKey
+            }}
+              {{input
+                type="password"
+                name="accessToken"
+                classNames="form-control"
+                placeholder=(t "clusterNew.civo.apiKey.placeholder")
+                value=cluster.civoEngineConfig.apiKey
+              }}
+            {{/input-or-display}}
+          </div>
+        </div>
+      {{/accordion-list-item}}
+      {{top-errors errors=errors}}
+      {{save-cancel
+        btnLabel="clusterNew.civo.apiKey.next"
+        savingLabel="clusterNew.civo.apiKey.loading"
+        save="verifyApiKey"
         cancel=close
-        saveDisabled=canAuthenticate
-        createLabel="clusterNew.civo.access.next"
-        savingLabel="clusterNew.civo.access.loading"
-    }}
-  {{/if}}
-
-  {{#if (and (gte step 2) (eq mode 'edit'))}}
-  {{#accordion-list-item title=clusterTitle
-        detail=clusterDetail
-        showExpand=false
-        expandOnInit=true
-        expandAll=al.expandAll
+      }}
+    {{else if (eq step 2)}}
+      {{#accordion-list-item
+        title=clusterConfigTitle
+        detail=clusterConfigDetail
+        expandAll=expandAll
         expand=(action expandFn)
-      }}
-  <div class="row">
-
-    <div class="col span-4">
-      <label class="acc-label">{{t 'clusterNew.civo.version.label'}}</label>
-      {{#input-or-display editable=(or (eq mode "new") eq mode "editing") value=selectedk8sVersion}}
-      {{new-select class="form-control"
-                           content=k8sUpgradeVersionChoices
-                           value=cluster.civoEngineConfig.kubernetesVersion
-              }}
-      {{/input-or-display}}
-    </div>
-
-
-    <div class="col span-4">
-      <label class="acc-label">{{t 'clusterNew.civo.quantityPerSubnet.label'}}</label>
-      {{#input-or-display editable=(or (eq mode "new") eq mode "editing") value=cluster.civoEngineConfig.quantityPerSubnet}}
-      {{input-integer min=1 max=maxNodeCount value=cluster.civoEngineConfig.quantityPerSubnet classNames="form-control" placeholder=(t 'clusterNew.civo.quantityPerSubnet.placeholder')}}
-      <p class="help-block">
-        {{t 'clusterNew.civo.quantityPerSubnet.help'}}
-      </p>
-      {{/input-or-display}}
-    </div>
-
-  </div>
-
-  {{/accordion-list-item}}
-
-  {{!-- exit point for update/upgrade --}}
-  {{#if refresh}}
-  {{save-cancel editing=(eq mode 'edit')
-            save="upgradeCluster"
-            cancel=close
-        }}
-  {{/if}}
-
-  {{else}}
-  {{#if (gte step 2)}}
-  {{#accordion-list-item title=clusterTitle
-        detail=clusterDetail
-        showExpand=false
         expandOnInit=true
-        expandAll=al.expandAll
+      }}
+        <div class="row">
+          <div class="col span-6">
+            <label class="acc-label">
+              {{t "clusterNew.civo.name.label"}}
+              {{field-required}}
+            </label>
+            {{#input-or-display
+              editable=true
+              value=cluster.civoEngineConfig.name
+            }}
+              {{input
+                type="text"
+                name="name"
+                classNames="form-control"
+                placeholder=(t "clusterNew.civo.name.placeholder")
+                value=cluster.civoEngineConfig.name
+              }}
+            {{/input-or-display}}
+          </div>
+          <div class="col span-6">
+            <label class="acc-label">
+              {{t "clusterNew.civo.region.label"}}
+              {{field-required}}
+            </label>
+            {{#input-or-display
+              editable=true
+              value=cluster.civoEngineConfig.region
+            }}
+              {{new-select
+                class="form-control"
+                content=regionChoises
+                value=cluster.civoEngineConfig.region
+              }}
+            {{/input-or-display}}
+          </div>
+          <div class="col span-6">
+            <label class="acc-label">
+              {{t "clusterNew.civo.networkId.label"}}
+              {{field-required}}
+            </label>
+            {{#input-or-display
+              editable=true
+              value=cluster.civoEngineConfig.networkId
+            }}
+              {{input
+                type="text"
+                name="networkId"
+                classNames="form-control"
+                placeholder=(t "clusterNew.civo.networkId.placeholder")
+                value=cluster.civoEngineConfig.networkId
+              }}
+            {{/input-or-display}}
+          </div>
+          <div class="col span-6">
+            <label class="acc-label">
+              {{t "clusterNew.civo.cniPlugin.label"}}
+              {{field-required}}
+            </label>
+            {{#input-or-display
+              editable=true
+              value=cluster.civoEngineConfig.cniPlugin
+            }}
+              {{input
+                type="text"
+                name="cniPlugin"
+                classNames="form-control"
+                placeholder=(t "clusterNew.civo.cniPlugin.placeholder")
+                value=cluster.civoEngineConfig.cniPlugin
+              }}
+            {{/input-or-display}}
+          </div>
+          <div class="col span-6">
+            <label class="acc-label">
+              {{t "clusterNew.civo.firewallId.label"}}
+              {{field-required}}
+            </label>
+            {{#input-or-display
+              editable=true
+              value=cluster.civoEngineConfig.firewallId
+            }}
+              {{input
+                type="text"
+                name="firewallId"
+                classNames="form-control"
+                placeholder=(t "clusterNew.civo.firewallId.placeholder")
+                value=cluster.civoEngineConfig.firewallId
+              }}
+            {{/input-or-display}}
+          </div>
+          <div class="col span-6">
+            <label class="acc-label">
+              {{t "clusterNew.civo.kubernetesVersion.label"}}
+              {{field-required}}
+            </label>
+            {{#input-or-display
+              editable=true
+              value=cluster.civoEngineConfig.kubernetesVersion
+            }}
+              {{new-select
+                class="form-control"
+                content=k8sVersionChoises
+                value=cluster.civoEngineConfig.kubernetesVersion
+              }}
+            {{/input-or-display}}
+          </div>
+        </div>
+      {{/accordion-list-item}}
+      {{top-errors errors=errors}}
+      {{save-cancel
+        btnLabel="clusterNew.civo.clusterConfig.next"
+        savingLabel="clusterNew.civo.clusterConfig.loading"
+        save="verifyClusterConfig"
+        cancel=close
+      }}
+    {{else if (eq step 3)}}
+      {{#accordion-list-item
+        title=nodePoolConfigTitle
+        detail=nodePoolConfigDetail
+        expandAll=expandAll
         expand=(action expandFn)
+        expandOnInit=true
       }}
-
-  <div class="row">
-    <div class="col span-6 mb-0">
-      <label class="acc-label">{{t 'clusterNew.civo.version.label'}}</label>
-      {{#input-or-display editable=(and (eq step 2) isNew) value=selectedk8sVersion}}
-      {{new-select class="form-control"
-                           content=k8sVersionChoices
-                           value=cluster.civoEngineConfig.kubernetesVersion
+        {{! select node pool }}
+        <div class="row">
+          <div class="col span-4">
+            <label class="acc-label">
+              {{t "clusterNew.civo.selectedNodePoolType.label"}}
+            </label>
+            {{#input-or-display editable=true value=selectedNodePoolType}}
+              {{new-select
+                class="form-control"
+                content=nodePoolChoises
+                value=selectedNodePoolType
               }}
-      {{/input-or-display}}
-    </div>
-
-    <div class="col span-6 mb-0">
-      <label class="acc-label">{{t 'clusterNew.civo.quantityPerSubnet.label'}}</label>
-      {{#input-or-display editable=(and (eq step 2) isNew) value=cluster.civoEngineConfig.quantityPerSubnet}}
-      {{input-integer min=1 max=maxNodeCount value=cluster.civoEngineConfig.quantityPerSubnet classNames="form-control" placeholder=(t 'clusterNew.civo.quantityPerSubnet.placeholder')}}
-      <p class="help-block">
-        {{t 'clusterNew.civo.quantityPerSubnet.help'}}
-      </p>
-      {{/input-or-display}}
-    </div>
-
-  </div>
-  {{/accordion-list-item}}
-  {{#if (and refresh (eq step 2))}}
-  {{save-cancel editing=(eq mode 'edit')
-            save="loadNodeConfig"
-            cancel=close
-            createLabel="clusterNew.civo.cluster.next"
-            savingLabel="clusterNew.civo.cluster.loading"
-        }}
-  {{/if}}
-  {{/if}}
-  {{#if (gte step 3)}}
-  {{#accordion-list-item title=virtualCloudNetworkTitle
-          detail=virtualCloudNetworkDetail
-          showExpand=false
-          expandOnInit=true
-          expandAll=al.expandAll
-          expand=(action expandFn)
-      }}
-
-
-  <div class="row">
-
-    <div class="col span-6">
-      {{#input-or-display
-         editable=(not-eq mode "view")
-         value=(if vcnCreationMode (t "generic.enabled") (t "generic.disabled"))
-      }}
-      <div class="radio">
-        <label>
-          {{radio-button
-              selection=vcnCreationMode
-              value="Quick"
-              disabled=(if multipleRegistries true false)
-            }}
-          {{t 'clusterNew.civo.subnetAccessOptions.quick'}}
-        </label>
-      </div>
-      <div class="radio">
-        <label>
-          {{radio-button
-              selection=vcnCreationMode
-              value="Existing"
-              disabled=(if multipleRegistries true false)
-            }}
-          {{t 'clusterNew.civo.subnetAccessOptions.existing'}}
-        </label>
-      </div>
-      <div class="radio">
-        <label>
-          {{radio-button
-              selection=vcnCreationMode
-              value="Custom"
-              disabled=(if multipleRegistries true false)
-            }}
-          {{t 'clusterNew.civo.subnetAccessOptions.custom'}}
-        </label>
-      </div>
-
-      {{#if (eq vcnCreationMode "Custom")}}
-      <div class="row">
-        <div class="col span-6">
-          <label class="acc-label">{{t 'clusterNew.civo.subnet.label'}}{{field-required}}</label>
-          {{#input-or-display editable=(and (eq step 3) isNew) value=selectedSubnet}}
-          {{searchable-select class="form-control"
-                content=subnetAccessChoices
-                value=cluster.civoEngineConfig.subnetAccess
-              }}
-          {{/input-or-display}}
+            {{/input-or-display}}
+          </div>
+          <div class="col span-1">
+            <div class="acc-label pb-15">
+              Monthly:
+            </div>
+            $
+            {{this.selectedNodePoolObj.price.monthly}}
+          </div>
+          <div class="col span-1">
+            <div class="acc-label pb-15">
+              Hourly:
+            </div>
+            $
+            {{this.selectedNodePoolObj.price.hourly}}
+          </div>
+          <div class="col span-1">
+            <div class="acc-label pb-15">
+              RAM:
+            </div>
+            {{this.selectedNodePoolObj.memoryGb}}
+            GB
+          </div>
+          <div class="col span-1">
+            <div class="acc-label pb-15">
+              CPUs:
+            </div>
+            {{this.selectedNodePoolObj.vcpus}}
+          </div>
+          <div class="col span-1">
+            <div class="acc-label pb-15">
+              Storage:
+            </div>
+            {{this.selectedNodePoolObj.diskGb}}
+            GB
+          </div>
+          <div class="col span-1">
+            <div class="acc-label">
+              Count:
+            </div>
+            <Input
+              @type="number"
+              @min="1"
+              @value={{this.selectedNodePoolObj.count}}
+            />
+          </div>
+          <div class="col span-1">
+            <div class="acc-label pb-10">
+              Actions
+            </div>
+            <button
+              class="btn bg-primary icon-btn p-0"
+              {{action "addSelectedNodePool"}}
+            >
+              <span class="darken">
+                <i class="icon icon-plus text-small"></i>
+              </span>
+              <span>
+                Add Node Pool
+              </span>
+            </button>
+          </div>
         </div>
-
-        <div class="col span-6">
-          <label class="acc-label">{{t 'clusterNew.civo.cidr.label'}}</label>
-          {{#input-or-display editable=(and (eq step 3) isNew) value=cluster.civoEngineConfig.vcnCidr}}
-          {{input type="text" classNames="form-control" placeholder=(t 'clusterNew.civo.cidr.placeholder') value=cluster.civoEngineConfig.vcnCidr}}
-          {{/input-or-display}}
+        <div class="ember-view">
+          <div class="header mt-20 clearfix">
+            <div class="pull-left">
+              <h2 class="mb-0">
+                {{t "clusterNew.civo.nodePools.label"}}
+              </h2>
+            </div>
+          </div>
+          <div class="grid sortable-table ember-view">
+            <table class="fixed grid sortable-table">
+              <thead>
+                <tr class="fixed-header">
+                  <th lass="sortable ember-view" role="columnheader">
+                    <a class="btn bg-transparent">
+                      Label
+                    </a>
+                  </th>
+                  <th lass="sortable ember-view" role="columnheader">
+                    <a class="btn bg-transparent">
+                      Monthly $
+                    </a>
+                  </th>
+                  <th lass="sortable ember-view" role="columnheader">
+                    <a class="btn bg-transparent">
+                      Hourly $
+                    </a>
+                  </th>
+                  <th lass="sortable ember-view" role="columnheader">
+                    <a class="btn bg-transparent">
+                      RAM (GB)
+                    </a>
+                  </th>
+                  <th lass="sortable ember-view" role="columnheader">
+                    <a class="btn bg-transparent">
+                      CPUs
+                    </a>
+                  </th>
+                  <th lass="sortable ember-view" role="columnheader">
+                    <a class="btn bg-transparent">
+                      Storage (GB)
+                    </a>
+                  </th>
+                  <th lass="sortable ember-view" role="columnheader">
+                    <a class="btn bg-transparent">
+                      Count
+                    </a>
+                  </th>
+                  <th lass="sortable ember-view" role="columnheader">
+                    <a class="btn bg-transparent"></a>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each this.selectedNodePoolList as |selectedNodePool|}}
+                  <tr class="main-row ember-view">
+                    <td>
+                      {{selectedNodePool.label}}
+                    </td>
+                    <td>
+                      {{selectedNodePool.price.monthly}}
+                    </td>
+                    <td>
+                      {{selectedNodePool.price.hourly}}
+                    </td>
+                    <td>
+                      {{selectedNodePool.memoryGb}}
+                    </td>
+                    <td>
+                      {{selectedNodePool.vcpus}}
+                    </td>
+                    <td>
+                      {{selectedNodePool.diskGb}}
+                    </td>
+                    <td>
+                      <Input
+                        @type="number"
+                        @min="1"
+                        @value={{selectedNodePool.count}}
+                      />
+                    </td>
+                    <td class="text-center">
+                      <button
+                        class="btn bg-error btn-sm"
+                        {{action "deleteNodePool" selectedNodePool.id}}
+                      >
+                        <i class="icon icon-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                {{else}}
+                  <tr class="main-row ember-view">
+                    <td colspan="8" class="p-10 text-center">
+                      {{t "clusterNew.civo.nodePools.empty"}}
+                    </td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-      {{/if}}
-
-      {{#if (eq vcnCreationMode "Existing")}}
-      <div class="row">
-        <div class="col span-6">
-          <label class="acc-label">{{t 'clusterNew.civo.existingVCNDetails.compartmentOCID'}}</label>
-          {{#input-or-display editable=(and (eq step 3) isNew) value=cluster.civoEngineConfig.vcnCompartmentId}}
-          {{input type="text" classNames="form-control" placeholder=(t 'clusterNew.civo.existingVCNDetails.compartmentOCIDPlaceholder') value=cluster.civoEngineConfig.vcnCompartmentId}}
-          <p class="help-block">{{t "clusterNew.civo.existingVCNDetails.compartmentOCIDHelp" }}</p>
-          {{/input-or-display}}
-        </div>
-
-        <div class="col span-6">
-          <label class="acc-label">{{t 'clusterNew.civo.existingVCNDetails.vcnName'}}{{field-required}}</label>
-          {{#input-or-display editable=(and (eq step 3) isNew) value=cluster.civoEngineConfig.vcnName}}
-          {{input type="text" classNames="form-control" placeholder=(t 'clusterNew.civo.existingVCNDetails.vcnNamePlaceholder') value=cluster.civoEngineConfig.vcnName}}
-          {{/input-or-display}}
-        </div>
-      </div>
-      <div class="row">
-        <div class="col span-6">
-          <label class="acc-label">{{t 'clusterNew.civo.existingVCNDetails.lbSubnetName1'}}{{field-required}}</label>
-          {{#input-or-display editable=(and (eq step 3) isNew) value=cluster.civoEngineConfig.loadBalancerSubnetName1}}
-          {{input type="text" classNames="form-control" placeholder=(t 'clusterNew.civo.existingVCNDetails.lbSubnetName1Placeholder') value=cluster.civoEngineConfig.loadBalancerSubnetName1}}
-          {{/input-or-display}}
-        </div>
-
-        <div class="col span-6">
-          <label class="acc-label">{{t 'clusterNew.civo.existingVCNDetails.lbSubnetName2'}}</label>
-          {{#input-or-display editable=(and (eq step 3) isNew) value=cluster.civoEngineConfig.loadBalancerSubnetName2}}
-          {{input type="text" classNames="form-control" placeholder=(t 'clusterNew.civo.existingVCNDetails.lbSubnetName2Placeholder') value=cluster.civoEngineConfig.loadBalancerSubnetName2}}
-          {{/input-or-display}}
-        </div>
-
-      </div>
-      {{/if}}
-      {{/input-or-display}}
-    </div>
-
-  </div>
-
-  {{/accordion-list-item}}
-  {{#if (and refresh (eq step 3))}}
-  {{save-cancel editing=(eq mode 'edit')
-            save="loadInstanceConfig"
-            cancel=close
-            saveDisabled=canSaveVCN
-            createLabel="clusterNew.civo.node.next"
-            savingLabel="clusterNew.civo.node.loading"
-        }}
-  {{/if}}
-  {{/if}}
-  {{#if (gte step 4)}}
-  {{#accordion-list-item title=instanceTitle
-          detail=instanceDetail
-          showExpand=false
-          expandOnInit=true
-          expandAll=al.expandAll
-          expand=(action expandFn)
-      }}
-  <div class="row">
-
-
-    <div class="row">
-      <div class="col span-6">
-        <label class="acc-label">{{t 'clusterNew.civo.nodeShape.label'}}{{field-required}}</label>
-        {{#input-or-display editable=(and (eq step 4) isNew) value=selectednodeShape}}
-        {{searchable-select class="form-control"
-                                    content=nodeShapeChoices
-                                    value=cluster.civoEngineConfig.nodeShape
-                }}
-        {{/input-or-display}}
-      </div>
-
-      <div class="col span-6">
-        <label class="acc-label">{{t 'clusterNew.civo.os.label'}}</label>
-        {{#input-or-display editable=isNew value=selectedImage}}
-        {{searchable-select class="form-control"
-                                    content=imageChoices
-                                    value=cluster.civoEngineConfig.nodeImage
-                }}
-        {{/input-or-display}}
-      </div>
-
-    </div>
-
-    <div class="row">
-
-      <div class="col span-4">
-        <label class="acc-label pt-5">{{t "clusterNew.civo.nodeSSHKey.label"}}</label>
-      </div>
-      {{input-text-file
-        classNames="box"
-        value=cluster.civoEngineConfig.nodePublicKeyContents
-        multiple=False
-        canChangeName=false
-        accept="text/plain,.pem,.pub,.key"
-        minHeight=40
-        placeholder="clusterNew.civo.nodeSSHKey.placeholder"
-        shouldChangeName=false
-        concealValue=false
-      }}
-
-    </div>
-
-
-
-  </div>
-
-  {{/accordion-list-item}}
-  {{#if (and refresh (eq step 4))}}
-  {{save-cancel editing=(eq mode 'edit')
-          saveDisabled=canCreateCluster
-          save="save"
+        {{! show selected node pools end }}
+      {{/accordion-list-item}}
+      {{top-errors errors=errors}}
+      {{#if (eq mode "edit")}}
+        {{save-cancel
+          btnLabel="clusterNew.civo.nodePoolConfig.update"
+          savingLabel="clusterNew.civo.nodePoolConfig.loading"
+          save="updateCluster"
           cancel=close
-      }}
-  {{/if}}
-  {{/if}}
-  {{/if}}
-
-
-  {{top-errors errors=errors}}
-  {{top-errors errors=otherErrors}}
-  {{top-errors errors=clusterErrors}}
+        }}
+      {{else}}
+        {{save-cancel
+          btnLabel="clusterNew.civo.nodePoolConfig.next"
+          savingLabel="clusterNew.civo.nodePoolConfig.loading"
+          save="createCluster"
+          cancel=close
+        }}
+      {{/if}}
+    {{/if}}
   {{/accordion-list}}
 </section>
