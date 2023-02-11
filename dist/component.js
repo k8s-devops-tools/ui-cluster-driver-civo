@@ -84,17 +84,15 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
         'civo': {
           'access': {
             'next': 'Next: Authenticate & Configure Cluster',
-            'loading': 'Loading values from Oracle Cloud Infrastructure',
-            'title': 'OCI Account Configuration',
+            'loading': 'Loading values from Civo',
+            'title': 'Civo Account Configuration',
             'detail': 'Choose the region and API Key that will be used to authenticate and configure Oracle Container Engine.'
           },
           'apiKey': {
             'next': 'Proceed to Cluster Configuration',
-            'loading': 'Verifying your API key',
-            'title': 'Civo API Key',
-            "required": "API key is required",
-            "placeholder": "The API key to use for accessing your Civo account",
-            'description': 'Provide us with the API key that will be used to access your Civo account'
+            'label': 'API key is required',
+            'placeholder': 'The API key to use for accessing your Civo account',
+            'required': 'API key is required'
           },
           'cluster': {
             'title': 'Cluster Configuration',
@@ -465,7 +463,7 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
       const k8sVersion = get(this, 'cluster.civoEngineConfig.kubernetesVersion');
       return k8sVersion && k8sVersionMap[k8sVersion];
     }),
-    canAuthenticate: computed('cluster.civoEngineConfig.tenancyId', 'cluster.civoEngineConfig.compartmentId', 'cluster.civoEngineConfig.userOcid', 'cluster.civoEngineConfig.fingerprint', 'cluster.civoEngineConfig.privateKeyContents', function () {
+    canAuthenticate: computed('cluster.civoEngineConfig.apiKey', function () {
       return get(this, 'cluster.civoEngineConfig.apiKey') ? false : true;
     }),
     canSaveVCN: computed('vcnCreationMode', 'cluster.civoEngineConfig.vcnName', 'cluster.civoEngineConfig.loadBalancerSubnetName1', 'cluster.civoEngineConfig.loadBalancerSubnetName2', 'cluster.civoEngineConfig.subnetAccess', 'cluster.civoEngineConfig.vcnCidr', function () {
