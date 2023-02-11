@@ -16,6 +16,7 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
   const alias = Ember.computed.alias;
   const service = Ember.inject.service;
   const all = Ember.RSVP.all;
+  const hash = Ember.RSVP.hash;
   const next = Ember.run.next;
   const regionMap = {
     'New York 1': 'NYC1',
