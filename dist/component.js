@@ -96,132 +96,60 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
     'en-us': {
       'clusterNew': {
         'civo': {
-          'access': {
-            'next': 'Next: Authenticate & Configure Cluster',
-            'loading': 'Loading values from Oracle Cloud Infrastructure',
-            'title': 'OCI Account Configuration',
-            'detail': 'Choose the region and API Key that will be used to authenticate and configure Oracle Container Engine.'
+          'apiKey': {
+            'next': 'Proceed to Cluster Configuration',
+            'loading': 'Verifying your API key',
+            'title': 'Civo API Key',
+            "required": "API key is required",
+            "placeholder": "The API key to use for accessing your Civo account",
+            'description': 'Provide us with the API key that will be used to access your Civo account'
           },
-          'region': {
-            'label': 'Region'
+          "clusterConfig": {
+            'next': 'Proceed to Cluster Configuration',
+            'loading': 'Verifying your access token'
           },
-          'tenancyOCID': {
-            'label': 'Tenancy OCID',
-            'placeholder': 'The OCID of the tenancy in which to create resources',
-            'required': 'Tenancy OCID is required'
+          "name": {
+            "label": "Name",
+            "placeholder": "The name of Civo cluster"
           },
-          'compartmentOCID': {
-            'label': 'Compartment OCID',
-            'placeholder': 'The OCID of the compartment in which to create the resources',
-            'required': 'Compartment OCID is required'
+          "region": {
+            "label": "Region",
+            "required": "Region is required"
           },
-          'userOcid': {
-            'label': 'User OCID',
-            'placeholder': 'The OCID of a user who has access to the specified tenancy/compartment',
-            'required': 'Tenancy OCID is required'
+          "kubernetesVersion": {
+            "label": "Kubernetes Version",
+            "placeholder": "Select a kubernetes version for your cluster",
+            "required": "Kubernetes Version is required"
           },
-          'userFingerprint': {
-            'label': 'User fingerprint',
-            'placeholder': "The fingerprint corresponding to the specified user's private API Key",
-            'required': 'User private key fingerprint is required'
+          "networkId": {
+            "label": "Network ID",
+            "placeholder": "Select a network ID for your cluster"
           },
-          'secretKey': {
-            'label': 'User Private Key',
-            'placeholder': 'The private API key contents for the specified OCI user, in PEM format',
-            'provided': 'Provided',
-            'required': 'User Private API Key is required'
+          "cniPlugin": {
+            "label": "CNI Plugin",
+            "placeholder": "Select a CNI plugin for your cluster"
           },
-          'secretKeyPassphrase': {
-            'label': 'User Private Key Passphrase',
-            'placeholder': 'The passphrase (if any) that protects private key file the specified OCI user',
-            'provided': 'Provided'
+          "firewallId": {
+            "label": "firewall ID",
+            "placeholder": "Select a firewall ID for your cluster"
           },
-          'cluster': {
-            'title': 'Cluster Configuration',
-            'detail': 'Choose the Kubernetes version and the number of nodes per subnet for the cluster.',
-            'next': 'Next: Configure Virtual Cloud Network',
-            'loading': 'Loading VCNs from Oracle Cloud Infrastructure'
+          "nodePoolConfig": {
+            'next': 'Create',
+            'loading': 'Creating your cluster',
+            'title': 'Node Pool Configuration',
+            'description': 'Configure your desired node pools',
+            'update': "Update"
           },
-          'vcn': {
-            'title': 'Virtual Cloud Network',
-            'detail': 'Configure the virtual cloud network that will be used for your Kubernetes cluster.',
-            'label': 'Virtual Cloud Network',
-            'required': 'VCN is required'
+          "selectedNodePoolType": {
+            "label": "Select type",
+            "placeholder": "Select a node pool type"
           },
-          'version': {
-            'label': 'Kubernetes Version',
-            'required': 'Kubernetes Version is required'
-          },
-          'cidr': {
-            'label': 'Virtual Cloud Network CIDR',
-            'placeholder': 'e.g. 172.16.0.0/16',
-            'required': 'Virtual Cloud Network CIDR is required',
-            'error': 'Virtual Cloud CIDR format error'
-          },
-          'existingVCNDetails': {
-            'compartmentOCID': 'OCID of the VCN\'s compartment',
-            'compartmentOCIDPlaceholder': 'e.g. ocid1.compartment.oc1..aaaaaaaa...',
-            'compartmentOCIDHelp': 'leave blank if it\'s the cluster compartment',
-            'vcnName': 'Name of the pre-existing VCN',
-            'vcnNamePlaceholder': 'e.g. my-vcn',
-            'lbSubnetName1': 'Name of first pre-existing LB subnet',
-            'lbSubnetName1Placeholder': 'e.g. my-lb-sub-1',
-            'lbSubnetName2': 'Name of second pre-existing LB subnet (if applicable)',
-            'lbSubnetName2Placeholder': 'e.g. my-lb-sub-2'
-          },
-          'quantityPerSubnet': {
-            'label': 'Nodes Per Subnet Count',
-            'placeholder': 'e.g. 1',
-            'required': 'Nodes per subnet is required',
-            'help': 'The quantity of nodes nodes to run in each worker subnet',
-            'error': 'The count of nodes should not be greater than {max}'
-          },
-          'nodeShape': {
-            'label': 'Instance Shape',
-            'required': 'Instance Shape is required'
-          },
-          'nodeSSHKey': {
-            'label': 'SSH public key for nodes',
-            'placeholder': 'Optional SSH public key for the nodes'
-          },
-          'instanceConfig': {
-            'label': 'Instance Configuration(CPU/Memory)',
-            'gpuLabel': 'Instance Configuration(CPU/Memory/GPU Type/GPU Count)',
-            'required': 'Instance Configuration is required'
-          },
-          'subnet': {
-            'label': 'Subnet Access',
-            'required': 'Subnet access is required'
-          },
-          'node': {
-            'title': 'Node Type',
-            'detail': 'Choose the node type that will be used for this Kubernetes cluster',
-            'next': 'Next: Configure Node Instances',
-            'loading': 'Loading configuration from Oracle Cloud Infrastructure'
-          },
-          'instance': {
-            'title': 'Node Instance Configuration',
-            'detail': 'Configure the instance that will be used as nodes in the cluster.'
-          },
-          'os': {
-            'label': 'Operating System'
-          },
-          'storageType': {
-            'label': 'Default Persistent Volume Disk Type'
-          },
-          'storageSize': {
-            'label': 'Default Persistent Volume Disk Size',
-            'placeholder': 'e.g. 10',
-            'error': 'Default Persistent Volume Disk Size should be greater than 0'
-          },
-          'localDisk': {
-            'label': 'Local Disk',
-            'placeholder': '{size} GB(Self-selection is not supported for the time being)'
-          },
-          'subnetAccessOptions': {
-            'quick': 'Quick Create',
-            'custom': 'Custom Create',
-            'existing': 'Existing'
+          "nodePools": {
+            "label": "Selected Node Pools",
+            "required": "Please add at least one node pool",
+            "empty": "Sorry, node pool list is empty",
+            "countError": "All node counts must be greater than 0.",
+            "placeholder": "Please select a node type to add"
           }
         }
       }
