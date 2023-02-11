@@ -1,104 +1,10 @@
 /*!!!!!!!!!!!Do not change anything between here (the DRIVERNAME placeholder will be automatically replaced at buildtime)!!!!!!!!!!!*/
-// https://github.com/rancher/ui/blob/master/lib/shared/addon/mixins/cluster-driver.js
 import ClusterDriver from 'shared/mixins/cluster-driver';
 
 // do not remove LAYOUT, it is replaced at build time with a base64 representation of the template of the hbs template
 // we do this to avoid converting template to a js file that returns a string and the cors issues that would come along with that
 const LAYOUT;
 /*!!!!!!!!!!!DO NOT CHANGE END!!!!!!!!!!!*/
-
-
-/*!!!!!!!!!!!GLOBAL CONST START!!!!!!!!!!!*/
-// EMBER API Access - if you need access to any of the Ember API's add them here in the same manner rather then import them via modules, since the dependencies exist in rancher we dont want to expor the modules in the amd def
-const computed = Ember.computed;
-const equal = Ember.computed.equal;
-const observer = Ember.observer;
-const get = Ember.get;
-const set = Ember.set;
-const setProperties = Ember.setProperties;
-const alias = Ember.computed.alias;
-const service = Ember.inject.service;
-const all = Ember.RSVP.all;
-const next = Ember.run.next;
-
-
-/* !!!!!!!!!!!GLOBAL CONST END!!!!!!!!!!!*/
-
-const regionMap = {
-  'Mumbai':    'ap-mumbai-1',
-  'Seoul':     'ap-seoul-1',
-  'Tokyo':     'ap-tokyo-1',
-  'Toronto':   'ca-toronto-1',
-  'Frankfurt': 'eu-frankfurt-1',
-  'Zurich':    'eu-zurich-1',
-  'Sao Paolo': 'sa-saopaulo-1',
-  'London':    'uk-london-1',
-  'Ashburn':   'us-ashburn-1',
-  'Phoenix':   'us-phoenix-1',
-  'Amsterdam': 'eu-amsterdam-1',
-  'Hyderabad': 'ap-hyderabad-1',
-  'Jeddah':    'me-jeddah-1',
-  'Osaka':     'ap-osaka-1',
-  'Melbourne': 'ap-melbourne-1',
-  'Sydney':    'ap-sydney-1',
-  'Chuncheon': 'ap-chuncheon-1',
-  'Montreal':  'ca-montreal-1',
-}
-
-const k8sVersionMap = {
-  'v1.17.9': 'v1.17.9', // default
-  'v1.16.8': 'v1.16.8',
-  'v1.15.7': 'v1.15.7',
-  'v1.14.8': 'v1.14.8',
-}
-
-const vcnIdMap = { quick: 'Quick Create', }
-
-const subnetAccessMap = { public: 'Public', private: 'Private', }
-
-const nodeShapeMap = {
-  'VM.Standard1.1':          'VM.Standard1.1',
-  'VM.Standard1.2':          'VM.Standard1.2',
-  'VM.Standard1.4':          'VM.Standard1.4',
-  'VM.Standard1.8':          'VM.Standard1.8',
-  'VM.Standard1.16':         'VM.Standard1.16',
-  'VM.Standard.B1.1':        'VM.Standard.B1.1',
-  'VM.Standard.B1.2':        'VM.Standard.B1.2',
-  'VM.Standard.B1.4':        'VM.Standard.B1.4',
-  'VM.Standard.B1.8':        'VM.Standard.B1.8',
-  'VM.Standard.B1.16':       'VM.Standard.B1.16',
-  'VM.Standard2.1':          'VM.Standard2.1',
-  'VM.Standard2.2':          'VM.Standard2.2',
-  'VM.Standard2.4':          'VM.Standard2.4',
-  'VM.Standard2.8':          'VM.Standard2.8',
-  'VM.Standard2.16':         'VM.Standard2.16',
-  'VM.Standard2.24':         'VM.Standard2.24',
-  'VM.Standard.E2.1.Micro':  'VM.Standard.E2.1.Micro',
-  'VM.Standard.E2.1':        'VM.Standard.E2.1',
-  'VM.Standard.E2.2':        'VM.Standard.E2.2',
-  'VM.Standard.E2.4':        'VM.Standard.E2.4',
-  'VM.Standard.E2.8':        'VM.Standard.E2.8',
-  'BM.Standard1.36':         'BM.Standard1.36',
-  'BM.Standard.B1.44':       'BM.Standard.B1.44',
-  'BM.Standard2.52':         'BM.Standard2.52',
-  'BM.Standard.E2.64':       'BM.Standard.E2.64',
-  'BM.Standard.E3.128':      'BM.Standard.E3.128',
-  'VM.DenseIO2.8':           'VM.DenseIO2.8',
-  'VM.DenseIO2.16':          'VM.DenseIO2.16',
-  'VM.DenseIO2.24':          'VM.DenseIO2.24',
-  'BM.DenseIO2.52':          'BM.DenseIO2.52',
-  'BM.HPC2.36':              'BM.HPC2.36',
-  'VM.GPU2.1':               'VM.GPU2.1',
-  'VM.GPU3.1':               'VM.GPU3.1',
-  'VM.GPU3.2':               'VM.GPU3.2',
-  'VM.GPU3.4':               'VM.GPU3.4',
-}
-
-const imageMap = {
-  'Oracle-Linux-7.6': 'Oracle-Linux-7.6',
-  'Oracle-Linux-7.5': 'Oracle-Linux-7.5',
-  'Oracle-Linux-7.4': 'Oracle-Linux-7.4',
-}
 
 const languages = {
   'en-us': {
@@ -158,322 +64,242 @@ const languages = {
           "empty": "Sorry, node pool list is empty",
           "countError": "All node counts must be greater than 0.",
           "placeholder": "Please select a node type to add"
-        },
+        }
       }
     }
-  },
+  }
 };
 
-/* !!!!!!!!!!!DO NOT CHANGE START!!!!!!!!!!!*/
-export default Ember.Component.extend(ClusterDriver, {
-  // 'civoEngineConfig googleKubernetesEngineConfig'
-  app:            service(),
-  router:         service(),
-  session:        service(),
-  /* !!!!!!!!!!!DO NOT CHANGE END!!!!!!!!!!!*/
-  intl:           service(),
-  driverName:     '%%DRIVERNAME%%',
-  configField:    '%%DRIVERNAME%%EngineConfig',
-  layout:         null,
-  versionChoices: [],
-  clusterQuota:   null,
-  imageChioces:   [],
-  allImages:      [],
-  zoneResource:   null,
-  instanceConfig:  '',
-  step:            1,
-  lanChanged:      null,
-  refresh:         false,
-  vcnCreationMode: '',
+const k8sVersions = [];
 
-  isNew:   equal('mode', 'new'),
-  editing: equal('mode', 'edit'),
-  config:  alias('cluster.%%DRIVERNAME%%EngineConfig'),
+// for tags
+const newTag = "";
+
+// for node pools
+const selectedNodePoolType = "";
+const selectedNodePoolObj = {};
+const selectedNodePoolList = [];
+
+/*!!!!!!!!!!!GLOBAL CONST START!!!!!!!!!!!*/
+// EMBER API Access - if you need access to any of the Ember API's add them here in the same manner rather then import them via modules, since the dependencies exist in rancher we dont want to expor the modules in the amd def
+const computed     = Ember.computed;
+const get          = Ember.get;
+const set          = Ember.set;
+const alias        = Ember.computed.alias;
+const service      = Ember.inject.service;
+const hash         = Ember.RSVP.hash;
+const next         = Ember.run.next;
+
+const defaultRadix = 10;
+const defaultBase  = 1024;
+/*!!!!!!!!!!!GLOBAL CONST END!!!!!!!!!!!*/
+
+
+
+/*!!!!!!!!!!!DO NOT CHANGE START!!!!!!!!!!!*/
+export default Ember.Component.extend(ClusterDriver, {
+  driverName: '%%DRIVERNAME%%',
+  configField: '%%DRIVERNAME%%EngineConfig',
+  app:        service(),
+  router:      service(),
+  session: service(),
+  intl: service(),
+  linode: service(),
+  
+  step: 1,
+  lanChanged: null,
+  refresh: false,
+
   init() {
-    /* !!!!!!!!!!!DO NOT CHANGE START!!!!!!!!!!!*/
     // This does on the fly template compiling, if you mess with this :cry:
     const decodedLayout = window.atob(LAYOUT);
-    const template = Ember.HTMLBars.compile(decodedLayout, { moduleName: 'shared/components/cluster-driver/driver-%%DRIVERNAME%%/template' });
+    const template      = Ember.HTMLBars.compile(decodedLayout, {
+      moduleName: 'shared/components/cluster-driver/driver-%%DRIVERNAME%%/template'
+    });
+    set(this,'layout', template);
 
-    set(this, 'layout', template);
     this._super(...arguments);
-    /* !!!!!!!!!!!DO NOT CHANGE END!!!!!!!!!!!*/
-    const lang = get(this, 'session.language');
 
+    // for languages
+    const lang = get(this, 'session.language');
     get(this, 'intl.locale');
     this.loadLanguage(lang);
 
-    // let config      = get(this, 'config');
-    let config = get(this, 'cluster.%%DRIVERNAME%%EngineConfig');
+    let config      = get(this, 'config');
     let configField = get(this, 'configField');
+    
+    // for node pools
+    set(this, "selectedNodePoolType", "")
+    set(this, "selectedNodePoolObj", {});
+    set(this, "selectedNodePoolList", this.prefillSelectedNodePoolList());
 
-    if (!config) {
-      // TODO config = get(this, 'globalStore').createRecord({
+    if ( !config ) {
       config = this.get('globalStore').createRecord({
-        type:              configField,
-        secretKey:         '',
-        clusterName:       '',
-        vcnCidr:           '10.0.0.0/16',
-        kubernetesVersion: 'v1.17.9',
-        region:            'us-phoenix-1',
-        vcn:               '',
-        securityListId:    '',
-        subnetAccess:      'public',
-        cpu:               0,
-        memory:            0,
-        quantityPerSubnet: 1,
+        type:               configField,
+        name: "",
+        label: "",
+        description: "",
+        apiKey: "",
+        networkId: "",
+        cniPlugin: "",
+        firewallId: "",
+        region: "LON1",
+        kubernetesVersion: "1.18",
+        nodePools: []
       });
 
       set(this, 'cluster.%%DRIVERNAME%%EngineConfig', config);
     }
-
-    // init cpu and memory
-    const {
-      cpu,
-      memory
-    } = get(this, 'config');
-
-    if (cpu && memory) {
-      set(this, 'instanceConfig', `${ get(this, 'config.cpu') }/${ get(this, 'config.memory') }`);
-    }
   },
+  /*!!!!!!!!!!!DO NOT CHANGE END!!!!!!!!!!!*/
+
+  config: alias('cluster.%%DRIVERNAME%%EngineConfig'),
 
   actions: {
+    verifyApiKey(cb) {
+      const auth = {
+        token: get(this, "cluster.%%DRIVERNAME%%EngineConfig.apiKey"),
+      };
+      let errors = [];
+      const intl = get(this, "intl");
 
-    // TODO implement authenticateOCI
-
-    authenticateOCI(cb) {
-      setProperties(this, {
-
-        'errors':                                       null,
-        'cluster.%%DRIVERNAME%%EngineConfig.userOcid':  (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.userOcid') || '').trim(),
-        'cluster.%%DRIVERNAME%%EngineConfig.secretKey': (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.secretKey') || '').trim(),
-        'cluster.%%DRIVERNAME%%EngineConfig.privateKeyPassphrase':  (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.privateKeyPassphrase') || '').trim(),
-        'cluster.%%DRIVERNAME%%EngineConfig.region':    (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.region')),
-
-      });
-
-      const errors = get(this, 'errors') || [];
-
-      set(this, 'step', 2);
-      cb(true);
-    },
-
-    // TODO re-implement loadNodeConfig
-    loadNodeConfig(cb) {
-      set(this, 'step', 3);
-      cb(true);
-    },
-
-    // TODO implement loadInstanceConfig
-    loadInstanceConfig(cb) {
-      set(this, 'errors', null);
-      set(this, 'step', 4);
-      cb(true);
-    },
-    upgradeCluster(cb) {
-      setProperties(this, { 'errors': null });
-
-      const errors = get(this, 'errors') || [];
-      const intl = get(this, 'intl');
-
-      const quantityPerSubnet = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.quantityPerSubnet');
-      const kubernetesVersion = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.kubernetesVersion');
-
-      if (!quantityPerSubnet) {
-        errors.push(intl.t('clusterNew.civo.quantityPerSubnet.required'));
-      } else {
-        const maxNodeCount = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.maxNodeCount');
-
-        if (!/^\d+$/.test(quantityPerSubnet) || parseInt(quantityPerSubnet, 10) < 0 || parseInt(quantityPerSubnet, 10) > maxNodeCount) {
-          errors.push(intl.t('clusterNew.civo.quantityPerSubnet.error', { max: maxNodeCount }));
-        }
-      }
-      if (!kubernetesVersion) {
-        errors.push(intl.t('clusterNew.civo.version.required'));
-      }
-
-      if (errors.length > 0) {
-        set(this, 'errors', errors);
-        cb();
-
-        return;
-      }
-
-      this.send('driverSave', cb);
-    },
-    save(cb) {
-      setProperties(this, {
-        'errors':        null,
-        'otherErrors':   null,
-        'clusterErrors': null,
-      });
-
-      const errors = get(this, 'errors') || [];
-
-      if (errors.length > 0) {
-        set(this, 'errors', errors);
+      if (!auth.token) {
+        errors.push(intl.t("clusterNew.civo.apiKey.required"));
+        set(this, "errors", errors);
         cb(false);
-
-        return;
-      }
-      if (!this.validate()) {
-        cb(false);
-
-        return;
-      }
-      if (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.nodeImage') == '') {
-        set(this, 'cluster.%%DRIVERNAME%%EngineConfig.nodeImage', imageMap['Oracle-Linux-7.6']);
-      }
-
-      if (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.subnetAccess') == 'public') {
-        set(this, 'cluster.%%DRIVERNAME%%EngineConfig.enablePrivateNodes', false);
       } else {
-        set(this, 'cluster.%%DRIVERNAME%%EngineConfig.enablePrivateNodes', true);
-      }
+        hash({
+          regions: this.linode.request(auth, 'regions'),
+          nodeTypes: this.linode.request(auth, 'linode/types'),
+          k8sVersions: this.linode.request(auth, 'lke/versions'),
+        }).then((responses) => {
+          this.setProperties({
+            errors: [],
+            step: 2,
+            regions: responses.regions.data.filter(region => (region.status === "ok" && region.capabilities.includes("Kubernetes"))),
+            nodeTypes: responses.nodeTypes.data.filter(type => (type.class !== 'nanode' && type.class !== 'gpu')),
+            k8sVersions: responses.k8sVersions.data,
+          });
+          cb(true);
+        }).catch((err) => {
+          if (err && err.body && err.body.errors && err.body.errors[0]) {
+            errors.push(`Error received from Linode: ${ err.body.errors[0].reason }`);
+          } else {
+            errors.push(`Error received from Linode`);
+          }
 
-      this.send('driverSave', cb);
+          this.setProperties({ errors, });
+          cb(false);
+        });
+      }
     },
-    cancel() {
+    verifyClusterConfig(cb) {
+      // verify if tags are not null
+      // if null replace with empty array
+      const tags = get(this, "cluster.%%DRIVERNAME%%EngineConfig.tags");
+      if (!tags) {
+        set(this, "cluster.%%DRIVERNAME%%EngineConfig.tags", []);
+      }
+      set(this, "step", 3);
+      cb(true);
+    },
+    
+    createCluster(cb) {
+      if (this.verifyNodePoolConfig()) {
+        this.send("driverSave", cb);
+      } else {
+        cb(false);
+      }
+    },
+
+    updateCluster(cb) {
+      if (this.verifyNodePoolConfig()) {
+        this.send("driverSave", cb);
+      } else {
+        cb(false);
+      }
+    },
+
+    cancelFunc(cb){
+      // probably should not remove this as its what every other driver uses to get back
       get(this, 'router').transitionTo('global-admin.clusters.index');
+      cb(true);
     },
-    cpuAndMemoryChanged(item) {
-      setProperties(this, {
-        'config.cpu':    item.raw.cpuCount,
-        'config.memory': item.raw.memoryCapacityInGB
-      });
+
+    // for tags
+    addNewTag() {
+      const tags = get(this, "cluster.%%DRIVERNAME%%EngineConfig.tags") || [];
+      const newTag = get(this, "newTag");
+
+      if (newTag) {
+        tags.pushObject(newTag);
+        set(this, "cluster.%%DRIVERNAME%%EngineConfig.tags", tags);
+        set(this, "newTag", "");
+      }
+    },
+    deleteTag(idx) {
+      const tags = get(this, "cluster.%%DRIVERNAME%%EngineConfig.tags") || [];
+      set(this, "cluster.%%DRIVERNAME%%EngineConfig.tags", tags.filter((tag, index) => index !== idx));
+    },
+
+    // for node pools
+    addSelectedNodePool() {
+      const selectedNodePoolObj = get(this, "selectedNodePoolObj");
+      const selectedNodePoolList = get(this, "selectedNodePoolList");
+
+      if (selectedNodePoolObj.id) {
+        // add to list
+        selectedNodePoolList.pushObject(selectedNodePoolObj);
+
+        // clear selected
+        set(this, "selectedNodePoolType", "");
+        set(this, "selectedNodePoolObj", {});
+      }
+    },
+    deleteNodePool(id) {
+      const selectedNodePoolList = get(this, "selectedNodePoolList");
+
+      set(this, "selectedNodePoolList", selectedNodePoolList.filter(n => n.id !== id))
     }
   },
 
+  // Add custom validation beyond what can be done from the config API schema
+  validate() {
+    // Get generic API validation errors
+    this._super();
+    var errors = get(this, 'errors')||[];
+    if ( !get(this, 'cluster.name') ) {
+      errors.push('Name is required');
+    }
+
+    // Add more specific errors
+
+    // Check something and add an error entry if it fails:
+    // if ( parseInt(get(this, 'config.memorySize'), defaultRadix) < defaultBase ) {
+    //   errors.push('Memory Size must be at least 1024 MB');
+    // }
+
+    // Set the array of errors for display,
+    // and return true if saving should continue.
+    if ( get(errors, 'length') ) {
+      set(this, 'errors', errors);
+      return false;
+    } else {
+      set(this, 'errors', null);
+      return true;
+    }
+  },
+
+
   // Any computed properties or custom logic can go here
+
+  // For languages
   languageChanged: observer('intl.locale', function() {
     const lang = get(this, 'intl.locale');
 
     if (lang) {
       this.loadLanguage(lang[0]);
     }
-  }),
-  clusterNameChanged: observer('cluster.name', function() {
-    const clusterName = get(this, 'cluster.name');
-    set(this, 'cluster.%%DRIVERNAME%%EngineConfig.clusterName', clusterName);
-  }),
-  accessTitle: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.civo.access.title');
-  }),
-  accessDetail: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.civo.access.detail');
-  }),
-  clusterTitle: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.civo.cluster.title');
-  }),
-  clusterDetail: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.civo.cluster.detail');
-  }),
-  virtualCloudNetworkTitle: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.civo.vcn.title');
-  }),
-  virtualCloudNetworkDetail: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.civo.vcn.detail');
-  }),
-  instanceTitle: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.civo.instance.title');
-  }),
-  instanceDetail: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.civo.instance.detail');
-  }),
-  maxNodeCount: computed('clusterQuota.slave', () => {
-    return 256;
-  }),
-  regionChoices: Object.entries(regionMap).map((e) => ({
-    label: e[0],
-    value: e[1]
-  })),
-  selectedRegion: computed('cluster.%%DRIVERNAME%%EngineConfig.region', function() {
-    const region = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.region');
-
-    return region;
-  }),
-  vcnChoices: Object.entries(vcnIdMap).map((e) => ({
-    label: e[1],
-    value: e[0]
-  })),
-  selectedVCN: computed('cluster.%%DRIVERNAME%%EngineConfig.vcnId', function() {
-    const vcnId = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.vcnId');
-
-    return vcnId && vcnIdMap[vcnId];
-  }),
-  subnetAccessChoices: Object.entries(subnetAccessMap).map((e) => ({
-    label: e[1],
-    value: e[0]
-  })),
-  selectedSubnetAccess: computed('cluster.%%DRIVERNAME%%EngineConfig.subnetAccess', function() {
-    const subnetAccess = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.subnetAccess');
-
-    return subnetAccess && subnetAccessMap[subnetAccess];
-  }),
-  nodeShapeChoices: Object.entries(nodeShapeMap).map((e) => ({
-    label: e[1],
-    value: e[0]
-  })),
-  selectednodeShape: computed('cluster.%%DRIVERNAME%%EngineConfig.nodeShape', function() {
-    const nodeShape = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.nodeShape');
-
-    return nodeShape && nodeShapeMap[nodeShape];
-  }),
-  imageChoices: Object.entries(imageMap).map((e) => ({
-    label: e[1],
-    value: e[0]
-  })),
-  selectedImage: computed('cluster.%%DRIVERNAME%%EngineConfig.nodeImage', function() {
-    const nodeImage = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.nodeImage');
-
-    return nodeImage && imageMap[nodeImage];
-  }),
-  k8sVersionChoices: Object.entries(k8sVersionMap).map((e) => ({
-    label: e[1],
-    value: e[0]
-  })),
-  k8sUpgradeVersionChoices: computed('cluster.%%DRIVERNAME%%EngineConfig.kubernetesVersion', function() {
-    let supportedVersions = Object.assign({}, k8sVersionMap);
-    var currentVersion = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.kubernetesVersion');
-
-    var cv = currentVersion.split('.').map((v) => {
-      return parseInt(v, 10);
-    });
-
-    const filtered = Object.keys(supportedVersions)
-      .filter((key) => (!this.k8sUpgradableTo(currentVersion, key) == 1))
-      .forEach((key) => delete supportedVersions[key]);
-
-    return Object.entries(supportedVersions).map((e) => ({
-      label: e[1],
-      value: e[0]
-    }));
-  }),
-  selectedk8sVersion: computed('cluster.%%DRIVERNAME%%EngineConfig.kubernetesVersion', function() {
-    const k8sVersion = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.kubernetesVersion');
-    return k8sVersion && k8sVersionMap[k8sVersion];
-  }),
-  canAuthenticate: computed('cluster.%%DRIVERNAME%%EngineConfig.tenancyId', 'cluster.%%DRIVERNAME%%EngineConfig.compartmentId', 'cluster.%%DRIVERNAME%%EngineConfig.userOcid', 'cluster.%%DRIVERNAME%%EngineConfig.fingerprint', 'cluster.%%DRIVERNAME%%EngineConfig.privateKeyContents', function() {
-    return get(this, 'cluster.%%DRIVERNAME%%EngineConfig.tenancyId') && get(this, 'cluster.%%DRIVERNAME%%EngineConfig.compartmentId') && get(this, 'cluster.%%DRIVERNAME%%EngineConfig.userOcid') && get(this, 'cluster.%%DRIVERNAME%%EngineConfig.fingerprint') && get(this, 'cluster.%%DRIVERNAME%%EngineConfig.privateKeyContents') ? false : true;
-  }),
-
-  canSaveVCN: computed('vcnCreationMode', 'cluster.%%DRIVERNAME%%EngineConfig.vcnName', 'cluster.%%DRIVERNAME%%EngineConfig.loadBalancerSubnetName1', 'cluster.%%DRIVERNAME%%EngineConfig.loadBalancerSubnetName2', 'cluster.%%DRIVERNAME%%EngineConfig.subnetAccess', 'cluster.%%DRIVERNAME%%EngineConfig.vcnCidr', function() {
-    const mode = get(this, 'vcnCreationMode');
-
-    if (mode === 'Quick') {
-      return false;
-    } else if (mode === 'Existing') {
-      // Driver will use the same compartment as the cluster if not set.
-      return (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.vcnName') && get(this, 'cluster.%%DRIVERNAME%%EngineConfig.loadBalancerSubnetName1')) ? false : true;
-    } else if (mode === 'Custom') {
-      return (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.subnetAccess') && get(this, 'cluster.%%DRIVERNAME%%EngineConfig.vcnCidr')) ? false : true;
-    }
-
-    return true;
-  }),
-  canCreateCluster: computed('cluster.%%DRIVERNAME%%EngineConfig.nodeShape', function() {
-    return get(this, 'cluster.%%DRIVERNAME%%EngineConfig.nodeShape') ? false : true;
   }),
 
   loadLanguage(lang) {
@@ -488,72 +314,129 @@ export default Ember.Component.extend(ClusterDriver, {
       set(this, 'lanChanged', +new Date());
     });
   },
-  // Add custom validation beyond what can be done from the config API schema
-  validate() {
-    // Get generic API validation errors
-    this._super();
-    var errors = get(this, 'errors') || [];
 
-    if (!get(this, 'cluster.name')) {
-      errors.push('Name is required');
-    }
+  // For API Key step
+  apiKeyTitle: computed('intl.locale', 'langChanged', function() {
+    return get(this, 'intl').t("clusterNew.civo.apiKey.title");
+  }),
+  apiKeyDetail: computed('intl.locale', 'langChanged', function() {
+    return get(this, 'intl').t("clusterNew.civo.apiKey.description");
+  }),
 
-    const tenancyId = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.tenancyId');
+  // For Cluster Configuration Step
+  clusterConfigTitle: computed('intl.locale', 'langChanged', function() {
+    return get(this, 'intl').t("clusterNew.civo.clusterConfig.title");
+  }),
+  clusterConfigDetail: computed('intl.locale', 'langChanged', function() {
+    return get(this, 'intl').t("clusterNew.civo.clusterConfig.description");
+  }),
 
-    if (!tenancyId.startsWith('ocid1.tenancy')) {
-      errors.push('A valid tenancy OCID is required');
-    }
+  // for region choises
+  regionChoises: computed('regions', async function() {
+    const ans = await get(this, "regions");
+    return ans.map(e => {
+      return {
+        label: e.id,
+        value: e.id
+      }
+    });
+  }),
 
-    const compartmentId = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.compartmentId');
+  // for kubernetes version
+  k8sVersionChoises: computed("k8sVersions.[]", function() {
+    const k8sVersions = get(this, "k8sVersions");
+    return k8sVersions.map(v => {
+      return {
+        label: v.id,
+        value: v.id
+      }
+    })
+  }),
 
-    if (!compartmentId.startsWith('ocid1.compartment') && !compartmentId.startsWith('ocid1.tenancy')) {
-      errors.push('A valid compartment OCID is required');
-    }
+  // For Node Pool Configuration Step
+  nodePoolConfigTitle: computed('intl.locale', 'langChanged', function() {
+    return get(this, 'intl').t("clusterNew.civo.nodePoolConfig.title");
+  }),
+  nodePoolConfigDetail: computed('intl.locale', 'langChanged', function() {
+    return get(this, 'intl').t("clusterNew.civo.nodePoolConfig.description");
+  }),
 
-    const userOcid = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.userOcid');
+  // for node pool choises
+  nodePoolChoises: computed("nodeTypes.[]", "selectedNodePoolList.[]", async function() {
+    const intl = get(this, 'intl');
+    const ans = await get(this, "nodeTypes");
+    const filteredAns = ans.filter(np => {
+      // filter out the already selected node pools
+      const selectedNodePoolList = get(this, "selectedNodePoolList");
+      const fnd = selectedNodePoolList.find(snp => snp.id === np.id);
+      if (fnd) return false;
+      else return true;
+    }).map(np => {
+      return {
+        label: np.label,
+        value: np.id
+      }
+    });
+    return [{label: intl.t("clusterNew.civo.nodePools.placeholder"), value: ""}, ...filteredAns];
+  }),
+  setSelectedNodePoolObj: observer("selectedNodePoolType", async function() {
+    const nodePoolTypes = await get(this, "nodeTypes");
+    const selectedNodePoolType = get(this, "selectedNodePoolType");
 
-    if (!userOcid.startsWith('ocid1.user')) {
-      errors.push('A valid user OCID is required');
-    }
+    if (selectedNodePoolType) {
+      const ans = nodePoolTypes.find(np => np.id === selectedNodePoolType);
+      set(this, "selectedNodePoolObj", {...ans, count: 1, memoryGb: ans.memory / 1024, diskGb: ans.disk / 1024});
+    } else set(this, "selectedNodePoolObj", {});
+  }),
+  setNodePools: observer("selectedNodePoolList.@each.count", function() {
+    const selectedNodePoolList = get(this, "selectedNodePoolList");
+    const nodePools = selectedNodePoolList.map(np => {
+      return `${np.id}=${np.count}`
+    })
+    set(this, "cluster.%%DRIVERNAME%%EngineConfig.nodePools", nodePools);
+  }),
 
-    // TODO Add more specific errors
+  verifyNodePoolConfig() {
+    const intl = get(this, 'intl');
+    const selectedNodePoolList = get(this, "selectedNodePoolList");
+    const errors = [];
 
-    // Set the array of errors for display,
-    // and return true if saving should continue.
-    if (get(errors, 'length')) {
-      set(this, 'errors', errors);
-
+    if (selectedNodePoolList.length === 0) {
+      errors.push(intl.t("clusterNew.civo.nodePools.required"));
+      set(this, "errors", errors);
       return false;
     } else {
-      set(this, 'errors', null);
-
+      const fnd = selectedNodePoolList.find(np => np.count <= 0);
+      if (fnd) {
+        errors.push(intl.t("clusterNew.civo.nodePools.countError"));
+        set(this, "errors", errors);
+        return false;
+      }
       return true;
     }
   },
 
-  k8sUpgradableTo(currVer, toVer) {
-    if (typeof currVer !== 'string') {
-      return false;
+  // to prefil selected node pool list for edit mode
+  prefillSelectedNodePoolListObserver: observer("nodeTypes.[]", function() {
+    this.prefillSelectedNodePoolList();
+  }),
+
+  async prefillSelectedNodePoolList() {
+    const nodePools = get(this, "cluster.%%DRIVERNAME%%EngineConfig.nodePools");
+    const nodePoolTypes = await get(this, "nodeTypes");
+
+    if (nodePools && nodePools.length) {
+      set(this, "selectedNodePoolList", nodePools.map(np => {
+        const [npId, cnt] = np.split("=");
+        const fnd = nodePoolTypes.find(npt => npt.id === npId);
+        if (fnd) {
+          return {...fnd, count: cnt};
+        } else return {id: npId, count: cnt, label: npId};
+      }));
+    } else {
+      set(this, "selectedNodePoolList", []);
     }
-    if (typeof toVer !== 'string') {
-      return false;
-    }
-
-    currVer = currVer.substr(1);
-    toVer = toVer.substr(1);
-    currVer = currVer.split('.');
-    toVer = toVer.split('.');
-
-    var len = Math.max(currVer.length, toVer.length);
-
-    for (var i = 0; i < len; i++) {
-      if ((toVer[i] || 0) > (currVer[i] || 0)) {
-        return true
-      } else if ((toVer[i] || 0) < (currVer[i] || 0)) {
-        return false
-      }
-    }
-
-    return true;
   },
+
+  // Any computed properties or custom logic can go here
 });
