@@ -185,6 +185,36 @@ const languages = {
           'custom':   'Custom Create',
           'existing': 'Existing',
 
+        },
+        "networkId": {
+          "label": "Network ID",
+          "placeholder": "Select a network ID for your cluster"
+        },
+        "cniPlugin": {
+          "label": "CNI Plugin",
+          "placeholder": "Select a CNI plugin for your cluster"
+        },
+        "firewallId": {
+          "label": "firewall ID",
+          "placeholder": "Select a firewall ID for your cluster"
+        },
+        "nodePoolConfig": {
+          'next': 'Create',
+          'loading': 'Creating your cluster',
+          'title': 'Node Pool Configuration',
+          'description': 'Configure your desired node pools',
+          'update': "Update"
+        },
+        "selectedNodePoolType": {
+          "label": "Select type",
+          "placeholder": "Select a node pool type"
+        },
+        "nodePools": {
+          "label": "Selected Node Pools",
+          "required": "Please add at least one node pool",
+          "empty": "Sorry, node pool list is empty",
+          "countError": "All node counts must be greater than 0.",
+          "placeholder": "Please select a node type to add"
         }
       }
     }
@@ -199,6 +229,8 @@ export default Ember.Component.extend(ClusterDriver, {
   session:        service(),
   /* !!!!!!!!!!!DO NOT CHANGE END!!!!!!!!!!!*/
   intl:           service(),
+  linode:         service(),
+
   driverName:     '%%DRIVERNAME%%',
   configField:    '%%DRIVERNAME%%EngineConfig',
   layout:         null,
@@ -208,6 +240,11 @@ export default Ember.Component.extend(ClusterDriver, {
   allImages:      [],
   zoneResource:   null,
   instanceConfig:  '',
+
+  selectedNodePoolType: '',
+  selectedNodePoolObj: {},
+  selectedNodePoolList: [],
+
   step:            1,
   lanChanged:      null,
   refresh:         false,
@@ -233,11 +270,6 @@ export default Ember.Component.extend(ClusterDriver, {
     // let config      = get(this, 'config');
     let config = get(this, 'cluster.%%DRIVERNAME%%EngineConfig');
     let configField = get(this, 'configField');
-
-        // for node pools
-        set(this, "selectedNodePoolType", "")
-        set(this, "selectedNodePoolObj", {});
-        set(this, "selectedNodePoolList", this.prefillSelectedNodePoolList());
 
 
     if (!config) {
@@ -292,7 +324,51 @@ export default Ember.Component.extend(ClusterDriver, {
 
     // TODO implement authenticateOCI
 
+
+    verifyApiKey(cb) {
+      const auth = {
+        token: get(this, "cluster.%%DRIVERNAME%%EngineConfig.apiKey"),
+      };
+      let errors = [];
+      const intl = get(this, "intl");
+
+      if (!auth.token) {
+        errors.push(intl.t("clusterNew.civo.apiKey.required"));
+        set(this, "errors", errors);
+        cb(false);
+      } else {
+        hash({
+          regions: this.linode.request(auth, 'regions'),
+          nodeTypes: this.linode.request(auth, 'linode/types'),
+          k8sVersions: this.linode.request(auth, 'lke/versions'),
+        }).then((responses) => {
+          this.setProperties({
+            errors: [],
+            step: 2,
+            regions: responses.regions.data.filter(region => (region.status === "ok" && region.capabilities.includes("Kubernetes"))),
+            nodeTypes: responses.nodeTypes.data.filter(type => (type.class !== 'nanode' && type.class !== 'gpu')),
+            k8sVersions: responses.k8sVersions.data,
+          });
+          cb(true);
+        }).catch((err) => {
+          if (err && err.body && err.body.errors && err.body.errors[0]) {
+            errors.push(`Error received from Linode: ${ err.body.errors[0].reason }`);
+          } else {
+            errors.push(`Error received from Linode`);
+          }
+
+          this.setProperties({ errors, });
+          cb(false);
+        });
+      }
+    },
+
     authenticateOCI(cb) {
+      let errors = get(this, 'errors') || [];
+
+
+
+
       setProperties(this, {
 
         'errors':                                       null,
@@ -303,7 +379,7 @@ export default Ember.Component.extend(ClusterDriver, {
 
       });
 
-      const errors = get(this, 'errors') || [];
+
 
       set(this, 'step', 2);
       cb(true);
@@ -351,6 +427,25 @@ export default Ember.Component.extend(ClusterDriver, {
       }
 
       this.send('driverSave', cb);
+    },
+    // for node pools
+    addSelectedNodePool() {
+      const selectedNodePoolObj = get(this, "selectedNodePoolObj");
+      const selectedNodePoolList = get(this, "selectedNodePoolList");
+
+      if (selectedNodePoolObj.id) {
+        // add to list
+        selectedNodePoolList.pushObject(selectedNodePoolObj);
+
+        // clear selected
+        set(this, "selectedNodePoolType", "");
+        set(this, "selectedNodePoolObj", {});
+      }
+    },
+    deleteNodePool(id) {
+      const selectedNodePoolList = get(this, "selectedNodePoolList");
+
+      set(this, "selectedNodePoolList", selectedNodePoolList.filter(n => n.id !== id))
     },
     save(cb) {
       setProperties(this, {
@@ -605,6 +700,69 @@ export default Ember.Component.extend(ClusterDriver, {
     }
 
     return true;
+  },
+
+  // For Node Pool Configuration Step
+  nodePoolConfigTitle: computed('intl.locale', 'langChanged', function() {
+    return get(this, 'intl').t("clusterNew.civo.nodePoolConfig.title");
+  }),
+  nodePoolConfigDetail: computed('intl.locale', 'langChanged', function() {
+    return get(this, 'intl').t("clusterNew.civo.nodePoolConfig.description");
+  }),
+
+  // for node pool choises
+  nodePoolChoises: computed("nodeTypes.[]", "selectedNodePoolList.[]", async function() {
+    const intl = get(this, 'intl');
+    const ans = await get(this, "nodeTypes");
+    const filteredAns = ans.filter(np => {
+      // filter out the already selected node pools
+      const selectedNodePoolList = get(this, "selectedNodePoolList");
+      const fnd = selectedNodePoolList.find(snp => snp.id === np.id);
+      if (fnd) return false;
+      else return true;
+    }).map(np => {
+      return {
+        label: np.label,
+        value: np.id
+      }
+    });
+    return [{label: intl.t("clusterNew.civo.nodePools.placeholder"), value: ""}, ...filteredAns];
+  }),
+  setSelectedNodePoolObj: observer("selectedNodePoolType", async function() {
+    const nodePoolTypes = await get(this, "nodeTypes");
+    const selectedNodePoolType = get(this, "selectedNodePoolType");
+
+    if (selectedNodePoolType) {
+      const ans = nodePoolTypes.find(np => np.id === selectedNodePoolType);
+      set(this, "selectedNodePoolObj", {...ans, count: 1, memoryGb: ans.memory / 1024, diskGb: ans.disk / 1024});
+    } else set(this, "selectedNodePoolObj", {});
+  }),
+  setNodePools: observer("selectedNodePoolList.@each.count", function() {
+    const selectedNodePoolList = get(this, "selectedNodePoolList");
+    const nodePools = selectedNodePoolList.map(np => {
+      return `${np.id}=${np.count}`
+    })
+    set(this, "cluster.%%DRIVERNAME%%EngineConfig.nodePools", nodePools);
+  }),
+
+  verifyNodePoolConfig() {
+    const intl = get(this, 'intl');
+    const selectedNodePoolList = get(this, "selectedNodePoolList");
+    const errors = [];
+
+    if (selectedNodePoolList.length === 0) {
+      errors.push(intl.t("clusterNew.civo.nodePools.required"));
+      set(this, "errors", errors);
+      return false;
+    } else {
+      const fnd = selectedNodePoolList.find(np => np.count <= 0);
+      if (fnd) {
+        errors.push(intl.t("clusterNew.civo.nodePools.countError"));
+        set(this, "errors", errors);
+        return false;
+      }
+      return true;
+    }
   },
 
   // to prefil selected node pool list for edit mode
