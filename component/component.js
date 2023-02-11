@@ -32,10 +32,9 @@ const regionMap = {
 }
 
 const k8sVersionMap = {
-  'v1.17.9': 'v1.17.9', // default
-  'v1.16.8': 'v1.16.8',
-  'v1.15.7': 'v1.15.7',
-  'v1.14.8': 'v1.14.8',
+  '1.23.6-k3s1': '1.23.6-k3s1',
+  '1.24.4-k3s1': '1.24.4-k3s1',
+  '1.25.0-k3s1': '1.25.0-k3s1', // default
 }
 
 const vcnIdMap = { quick: 'Quick Create', }
@@ -96,6 +95,7 @@ const languages = {
           'title':   'Civo Account Configuration',
           'detail':  'Choose the region and API Key that will be used to authenticate and configure Oracle Container Engine.'
         },
+        'region':      { 'label': 'Region' },
         'apiKey': {
           'next': 'Proceed to Cluster Configuration',
           'label':       'API key is required',
@@ -297,7 +297,7 @@ export default Ember.Component.extend(ClusterDriver, {
 
         'errors':                                       null,
         // 'cluster.%%DRIVERNAME%%EngineConfig.userOcid':  (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.userOcid') || '').trim(),
-        'cluster.%%DRIVERNAME%%EngineConfig.apiKey': (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.secretKey') || '').trim(),
+        'cluster.%%DRIVERNAME%%EngineConfig.apiKey': (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.apiKey') || '').trim(),
         // 'cluster.%%DRIVERNAME%%EngineConfig.privateKeyPassphrase':  (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.privateKeyPassphrase') || '').trim(),
         // 'cluster.%%DRIVERNAME%%EngineConfig.region':    (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.region')),
 
