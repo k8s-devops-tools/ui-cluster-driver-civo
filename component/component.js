@@ -25,24 +25,10 @@ const next = Ember.run.next;
 /* !!!!!!!!!!!GLOBAL CONST END!!!!!!!!!!!*/
 
 const regionMap = {
-  'Mumbai':    'ap-mumbai-1',
-  'Seoul':     'ap-seoul-1',
-  'Tokyo':     'ap-tokyo-1',
-  'Toronto':   'ca-toronto-1',
-  'Frankfurt': 'eu-frankfurt-1',
-  'Zurich':    'eu-zurich-1',
-  'Sao Paolo': 'sa-saopaulo-1',
-  'London':    'uk-london-1',
-  'Ashburn':   'us-ashburn-1',
-  'Phoenix':   'us-phoenix-1',
-  'Amsterdam': 'eu-amsterdam-1',
-  'Hyderabad': 'ap-hyderabad-1',
-  'Jeddah':    'me-jeddah-1',
-  'Osaka':     'ap-osaka-1',
-  'Melbourne': 'ap-melbourne-1',
-  'Sydney':    'ap-sydney-1',
-  'Chuncheon': 'ap-chuncheon-1',
-  'Montreal':  'ca-montreal-1',
+  'New York 1':  'NYC1',
+  'Frankfurt 1': 'FRA1',
+  'London 1':    'LON1',
+  'Phoenix 1':   'PHX1',
 }
 
 const k8sVersionMap = {
@@ -327,16 +313,16 @@ export default Ember.Component.extend(ClusterDriver, {
       const kubernetesVersion = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.kubernetesVersion');
 
       if (!quantityPerSubnet) {
-        errors.push(intl.t('clusterNew.oke.quantityPerSubnet.required'));
+        errors.push(intl.t('clusterNew.civo.quantityPerSubnet.required'));
       } else {
         const maxNodeCount = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.maxNodeCount');
 
         if (!/^\d+$/.test(quantityPerSubnet) || parseInt(quantityPerSubnet, 10) < 0 || parseInt(quantityPerSubnet, 10) > maxNodeCount) {
-          errors.push(intl.t('clusterNew.oke.quantityPerSubnet.error', { max: maxNodeCount }));
+          errors.push(intl.t('clusterNew.civo.quantityPerSubnet.error', { max: maxNodeCount }));
         }
       }
       if (!kubernetesVersion) {
-        errors.push(intl.t('clusterNew.oke.version.required'));
+        errors.push(intl.t('clusterNew.civo.version.required'));
       }
 
       if (errors.length > 0) {
@@ -404,28 +390,28 @@ export default Ember.Component.extend(ClusterDriver, {
     set(this, 'cluster.%%DRIVERNAME%%EngineConfig.clusterName', clusterName);
   }),
   accessTitle: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.oke.access.title');
+    return get(this, 'intl').t('clusterNew.civo.access.title');
   }),
   accessDetail: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.oke.access.detail');
+    return get(this, 'intl').t('clusterNew.civo.access.detail');
   }),
   clusterTitle: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.oke.cluster.title');
+    return get(this, 'intl').t('clusterNew.civo.cluster.title');
   }),
   clusterDetail: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.oke.cluster.detail');
+    return get(this, 'intl').t('clusterNew.civo.cluster.detail');
   }),
   virtualCloudNetworkTitle: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.oke.vcn.title');
+    return get(this, 'intl').t('clusterNew.civo.vcn.title');
   }),
   virtualCloudNetworkDetail: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.oke.vcn.detail');
+    return get(this, 'intl').t('clusterNew.civo.vcn.detail');
   }),
   instanceTitle: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.oke.instance.title');
+    return get(this, 'intl').t('clusterNew.civo.instance.title');
   }),
   instanceDetail: computed('intl.locale', 'lanChanged', function() {
-    return get(this, 'intl').t('clusterNew.oke.instance.detail');
+    return get(this, 'intl').t('clusterNew.civo.instance.detail');
   }),
   maxNodeCount: computed('clusterQuota.slave', () => {
     return 256;
