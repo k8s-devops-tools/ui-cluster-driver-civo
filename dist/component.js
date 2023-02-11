@@ -351,17 +351,6 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
       },
 
       loadNodeConfig(cb) {
-        set(this, 'step', 3);
-        cb(true);
-      },
-
-      loadInstanceConfig(cb) {
-        set(this, 'errors', null);
-        set(this, 'step', 4);
-        cb(true);
-      },
-
-      upgradeCluster(cb) {
         setProperties(this, {
           'errors': null
         });
@@ -392,6 +381,17 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
           return;
         }
 
+        set(this, 'step', 3);
+        cb(true);
+      },
+
+      loadInstanceConfig(cb) {
+        set(this, 'errors', null);
+        set(this, 'step', 4);
+        cb(true);
+      },
+
+      upgradeCluster(cb) {
         this.send('driverSave', cb);
       },
 

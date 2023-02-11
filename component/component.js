@@ -388,17 +388,6 @@ export default Ember.Component.extend(ClusterDriver, {
 
     // TODO re-implement loadNodeConfig
     loadNodeConfig(cb) {
-      set(this, 'step', 3);
-      cb(true);
-    },
-
-    // TODO implement loadInstanceConfig
-    loadInstanceConfig(cb) {
-      set(this, 'errors', null);
-      set(this, 'step', 4);
-      cb(true);
-    },
-    upgradeCluster(cb) {
       setProperties(this, { 'errors': null });
 
       const errors = get(this, 'errors') || [];
@@ -426,6 +415,23 @@ export default Ember.Component.extend(ClusterDriver, {
 
         return;
       }
+
+
+
+
+
+      set(this, 'step', 3);
+      cb(true);
+    },
+
+    // TODO implement loadInstanceConfig
+    loadInstanceConfig(cb) {
+      set(this, 'errors', null);
+      set(this, 'step', 4);
+      cb(true);
+    },
+    upgradeCluster(cb) {
+
 
       this.send('driverSave', cb);
     },
