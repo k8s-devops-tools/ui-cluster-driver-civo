@@ -141,38 +141,13 @@
 
         <div class="row">
           <div class="col span-6">
-            <label class="acc-label">
-              {{t "clusterNew.civo.name.label"}}
-              {{field-required}}
-            </label>
-            {{#input-or-display
-              editable=true
-              value=cluster.civoEngineConfig.name
-            }}
-              {{input
-                type="text"
-                name="name"
-                classNames="form-control"
-                placeholder=(t "clusterNew.civo.name.placeholder")
-                value=cluster.civoEngineConfig.name
-              }}
-            {{/input-or-display}}
-          </div>
-          <div class="col span-6">
-            <label class="acc-label">
-              {{t "clusterNew.civo.region.label"}}
-              {{field-required}}
-            </label>
-            {{#input-or-display
-              editable=true
-              value=cluster.civoEngineConfig.region
-            }}
-              {{new-select
-                class="form-control"
-                content=regionChoises
-                value=cluster.civoEngineConfig.region
-              }}
-            {{/input-or-display}}
+              <label class="acc-label">{{t 'clusterNew.civo.region.label'}}{{field-required}}</label>
+              {{#input-or-display editable=(eq mode "new") value=selectedRegion}}
+              {{searchable-select class="form-control"
+                                    content=regionChoices
+                                    value=cluster.civoEngineConfig.region
+                }}
+              {{/input-or-display}}
           </div>
 
           <div class="col span-6">
