@@ -236,11 +236,28 @@ export default Ember.Component.extend(ClusterDriver, {
     let config = get(this, 'cluster.%%DRIVERNAME%%EngineConfig');
     let configField = get(this, 'configField');
 
+        // for node pools
+        set(this, "selectedNodePoolType", "")
+        set(this, "selectedNodePoolObj", {});
+        set(this, "selectedNodePoolList", this.prefillSelectedNodePoolList());
+
+
     if (!config) {
       // TODO config = get(this, 'globalStore').createRecord({
       config = this.get('globalStore').createRecord({
         type:              configField,
-        secretKey:         '',
+        name: "",
+        label: "",
+        description: "",
+        apiKey: "",
+        networkId: "",
+        cniPlugin: "",
+        firewallId: "",
+        region: "LON1",
+        kubernetesVersion: "1.18",
+        nodePools: [],
+
+
         clusterName:       '',
         vcnCidr:           '10.0.0.0/16',
         kubernetesVersion: 'v1.17.9',
@@ -255,6 +272,12 @@ export default Ember.Component.extend(ClusterDriver, {
 
       set(this, 'cluster.%%DRIVERNAME%%EngineConfig', config);
     }
+
+    // for node pools
+    set(this, "selectedNodePoolType", "")
+    set(this, "selectedNodePoolObj", {});
+    set(this, "selectedNodePoolList", this.prefillSelectedNodePoolList());
+
 
     // init cpu and memory
     const {
@@ -584,5 +607,27 @@ export default Ember.Component.extend(ClusterDriver, {
     }
 
     return true;
+  },
+
+  // to prefil selected node pool list for edit mode
+  prefillSelectedNodePoolListObserver: observer("nodeTypes.[]", function() {
+    this.prefillSelectedNodePoolList();
+  }),
+
+  async prefillSelectedNodePoolList() {
+    const nodePools = get(this, "cluster.%%DRIVERNAME%%EngineConfig.nodePools");
+    const nodePoolTypes = await get(this, "nodeTypes");
+
+    if (nodePools && nodePools.length) {
+      set(this, "selectedNodePoolList", nodePools.map(np => {
+        const [npId, cnt] = np.split("=");
+        const fnd = nodePoolTypes.find(npt => npt.id === npId);
+        if (fnd) {
+          return {...fnd, count: cnt};
+        } else return {id: npId, count: cnt, label: npId};
+      }));
+    } else {
+      set(this, "selectedNodePoolList", []);
+    }
   },
 });
