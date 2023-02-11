@@ -145,10 +145,45 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
           errors.push(intl.t("clusterNew.civo.apiKey.required"));
           set(this, "errors", errors);
           cb(false);
-        } else {}
+        } else {
+          hash({
+            regions: this.linode.request(auth, 'regions'),
+            nodeTypes: this.linode.request(auth, 'linode/types'),
+            k8sVersions: this.linode.request(auth, 'lke/versions')
+          }).then(responses => {
+            this.setProperties({
+              errors: [],
+              step: 2,
+              regions: responses.regions.data.filter(region => region.status === "ok" && region.capabilities.includes("Kubernetes")),
+              nodeTypes: responses.nodeTypes.data.filter(type => type.class !== 'nanode' && type.class !== 'gpu'),
+              k8sVersions: responses.k8sVersions.data
+            });
+            cb(true);
+          }).catch(err => {
+            if (err && err.body && err.body.errors && err.body.errors[0]) {
+              errors.push(`Error received from Linode: ${err.body.errors[0].reason}`);
+            } else {
+              errors.push(`Error received from Linode`);
+            }
+
+            this.setProperties({
+              errors
+            });
+            cb(false);
+          });
+        }
       },
 
-      verifyClusterConfig(cb) {},
+      verifyClusterConfig(cb) {
+        const tags = get(this, "cluster.civoEngineConfig.tags");
+
+        if (!tags) {
+          set(this, "cluster.civoEngineConfig.tags", []);
+        }
+
+        set(this, "step", 3);
+        cb(true);
+      },
 
       createCluster(cb) {
         if (this.verifyNodePoolConfig()) {
