@@ -23,7 +23,7 @@
 
   {{#if (and refresh (eq step 1))}}
   {{save-cancel editing=(eq mode 'edit')
-        save="verifyApiKey"
+        save="authenticateOCI"
         cancel=close
         saveDisabled=canAuthenticate
         createLabel="clusterNew.civo.access.next"

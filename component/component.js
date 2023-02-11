@@ -712,32 +712,42 @@ export default Ember.Component.extend(ClusterDriver, {
   }),
 
   // for node pool choises
-  nodePoolChoises: computed("nodeTypes.[]", "selectedNodePoolList.[]", async function() {
-    const intl = get(this, 'intl');
-    const ans = await get(this, "nodeTypes");
-    const filteredAns = ans.filter(np => {
-      // filter out the already selected node pools
-      const selectedNodePoolList = get(this, "selectedNodePoolList");
-      const fnd = selectedNodePoolList.find(snp => snp.id === np.id);
-      if (fnd) return false;
-      else return true;
-    }).map(np => {
-      return {
-        label: np.label,
-        value: np.id
-      }
-    });
-    return [{label: intl.t("clusterNew.civo.nodePools.placeholder"), value: ""}, ...filteredAns];
-  }),
-  setSelectedNodePoolObj: observer("selectedNodePoolType", async function() {
-    const nodePoolTypes = await get(this, "nodeTypes");
-    const selectedNodePoolType = get(this, "selectedNodePoolType");
+  nodePoolChoises: Object.entries(nodeShapeMap).map((e) => ({
+    label: e[1],
+    value: e[0]
+  })),
+  setSelectedNodePoolObj: computed('cluster.%%DRIVERNAME%%EngineConfig.nodeShape', function() {
+    const nodeShape = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.nodeShape');
 
-    if (selectedNodePoolType) {
-      const ans = nodePoolTypes.find(np => np.id === selectedNodePoolType);
-      set(this, "selectedNodePoolObj", {...ans, count: 1, memoryGb: ans.memory / 1024, diskGb: ans.disk / 1024});
-    } else set(this, "selectedNodePoolObj", {});
+    return nodeShape && nodeShapeMap[nodeShape];
   }),
+
+  // nodePoolChoises: computed("nodeTypes.[]", "selectedNodePoolList.[]", async function() {
+  //   const intl = get(this, 'intl');
+  //   const ans = await get(this, "nodeTypes");
+  //   const filteredAns = ans.filter(np => {
+  //     // filter out the already selected node pools
+  //     const selectedNodePoolList = get(this, "selectedNodePoolList");
+  //     const fnd = selectedNodePoolList.find(snp => snp.id === np.id);
+  //     if (fnd) return false;
+  //     else return true;
+  //   }).map(np => {
+  //     return {
+  //       label: np.label,
+  //       value: np.id
+  //     }
+  //   });
+  //   return [{label: intl.t("clusterNew.civo.nodePools.placeholder"), value: ""}, ...filteredAns];
+  // }),
+  // setSelectedNodePoolObj: observer("selectedNodePoolType", async function() {
+  //   const nodePoolTypes = await get(this, "nodeTypes");
+  //   const selectedNodePoolType = get(this, "selectedNodePoolType");
+
+  //   if (selectedNodePoolType) {
+  //     const ans = nodePoolTypes.find(np => np.id === selectedNodePoolType);
+  //     set(this, "selectedNodePoolObj", {...ans, count: 1, memoryGb: ans.memory / 1024, diskGb: ans.disk / 1024});
+  //   } else set(this, "selectedNodePoolObj", {});
+  // }),
   setNodePools: observer("selectedNodePoolList.@each.count", function() {
     const selectedNodePoolList = get(this, "selectedNodePoolList");
     const nodePools = selectedNodePoolList.map(np => {
