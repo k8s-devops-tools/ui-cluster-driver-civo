@@ -19,6 +19,17 @@ const ASSETS        = 'assets/';
 const DRIVER_NAME   = argv.name || pkg.name.replace(/^ui-cluster-driver-/,'');
 const TRANSLATIONS  ='translations/';
 
+var cors2 = require('cors');
+
+var cors = function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', '*');
+
+  next();
+};
+
+
+
 console.log('Driver Name:', DRIVER_NAME);
 
 if (!DRIVER_NAME) {
@@ -139,6 +150,10 @@ gulp.task('watch', function () {
 gulp.task('server', gulp.parallel(['build', 'watch'], function () {
   return gulpConnect.server({
     root: [DIST],
+    livereload: true,
+    middleware: function() {
+        return [cors];
+    },
     port: process.env.PORT || 3000,
     https: false,
   });
