@@ -18,24 +18,6 @@
     </div>
 
   </div>
-  <div class="row">
-
-    <div class="col span-6">
-      <label class="acc-label pt-5">{{t "clusterNew.civo.secretKey.label"}}{{field-required}}</label>
-    </div>
-    {{input-text-file
-        classNames="box"
-        value=cluster.civoEngineConfig.privateKeyContents
-        multiple=False
-        canChangeName=false
-        accept="text/plain,.pem,.pkey,.key"
-        minHeight=40
-        placeholder="clusterNew.civo.secretKey.placeholder"
-        shouldChangeName=false
-        concealValue=true
-      }}
-
-  </div>
   {{/accordion-list-item}}
 
 

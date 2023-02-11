@@ -275,10 +275,10 @@ export default Ember.Component.extend(ClusterDriver, {
       setProperties(this, {
 
         'errors':                                       null,
-        'cluster.%%DRIVERNAME%%EngineConfig.userOcid':  (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.userOcid') || '').trim(),
-        'cluster.%%DRIVERNAME%%EngineConfig.secretKey': (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.secretKey') || '').trim(),
-        'cluster.%%DRIVERNAME%%EngineConfig.privateKeyPassphrase':  (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.privateKeyPassphrase') || '').trim(),
-        'cluster.%%DRIVERNAME%%EngineConfig.region':    (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.region')),
+        // 'cluster.%%DRIVERNAME%%EngineConfig.userOcid':  (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.userOcid') || '').trim(),
+        'cluster.%%DRIVERNAME%%EngineConfig.apiKey': (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.secretKey') || '').trim(),
+        // 'cluster.%%DRIVERNAME%%EngineConfig.privateKeyPassphrase':  (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.privateKeyPassphrase') || '').trim(),
+        // 'cluster.%%DRIVERNAME%%EngineConfig.region':    (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.region')),
 
       });
 
@@ -484,7 +484,7 @@ export default Ember.Component.extend(ClusterDriver, {
     return k8sVersion && k8sVersionMap[k8sVersion];
   }),
   canAuthenticate: computed('cluster.%%DRIVERNAME%%EngineConfig.tenancyId', 'cluster.%%DRIVERNAME%%EngineConfig.compartmentId', 'cluster.%%DRIVERNAME%%EngineConfig.userOcid', 'cluster.%%DRIVERNAME%%EngineConfig.fingerprint', 'cluster.%%DRIVERNAME%%EngineConfig.privateKeyContents', function() {
-    return get(this, 'cluster.%%DRIVERNAME%%EngineConfig.tenancyId') && get(this, 'cluster.%%DRIVERNAME%%EngineConfig.compartmentId') && get(this, 'cluster.%%DRIVERNAME%%EngineConfig.userOcid') && get(this, 'cluster.%%DRIVERNAME%%EngineConfig.fingerprint') && get(this, 'cluster.%%DRIVERNAME%%EngineConfig.privateKeyContents') ? false : true;
+    return get(this, 'cluster.%%DRIVERNAME%%EngineConfig.apiKey') ? false : true;
   }),
 
   canSaveVCN: computed('vcnCreationMode', 'cluster.%%DRIVERNAME%%EngineConfig.vcnName', 'cluster.%%DRIVERNAME%%EngineConfig.loadBalancerSubnetName1', 'cluster.%%DRIVERNAME%%EngineConfig.loadBalancerSubnetName2', 'cluster.%%DRIVERNAME%%EngineConfig.subnetAccess', 'cluster.%%DRIVERNAME%%EngineConfig.vcnCidr', function() {
