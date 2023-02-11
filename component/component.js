@@ -504,7 +504,7 @@ export default Ember.Component.extend(ClusterDriver, {
     const k8sVersion = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.kubernetesVersion');
     return k8sVersion && k8sVersionMap[k8sVersion];
   }),
-  canAuthenticate: computed('cluster.%%DRIVERNAME%%EngineConfig.tenancyId', 'cluster.%%DRIVERNAME%%EngineConfig.compartmentId', 'cluster.%%DRIVERNAME%%EngineConfig.userOcid', 'cluster.%%DRIVERNAME%%EngineConfig.fingerprint', 'cluster.%%DRIVERNAME%%EngineConfig.privateKeyContents', function() {
+  canAuthenticate: computed('cluster.%%DRIVERNAME%%EngineConfig.apiKey', function() {
     return get(this, 'cluster.%%DRIVERNAME%%EngineConfig.apiKey') ? false : true;
   }),
 
