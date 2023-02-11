@@ -70,6 +70,14 @@ const languages = {
   }
 };
 
+const regionMap = {
+  'New York 1':  'NYC1',
+  'Frankfurt 1': 'FRA1',
+  'London 1':    'LON1',
+  'Phoenix 1':   'PHX1',
+
+}
+
 const k8sVersions = [];
 
 // for tags
@@ -83,6 +91,7 @@ const selectedNodePoolList = [];
 /*!!!!!!!!!!!GLOBAL CONST START!!!!!!!!!!!*/
 // EMBER API Access - if you need access to any of the Ember API's add them here in the same manner rather then import them via modules, since the dependencies exist in rancher we dont want to expor the modules in the amd def
 const computed     = Ember.computed;
+const observer     = Ember.observer;
 const get          = Ember.get;
 const set          = Ember.set;
 const alias        = Ember.computed.alias;
@@ -105,7 +114,7 @@ export default Ember.Component.extend(ClusterDriver, {
   session: service(),
   intl: service(),
   linode: service(),
-  
+
   step: 1,
   lanChanged: null,
   refresh: false,
@@ -127,7 +136,7 @@ export default Ember.Component.extend(ClusterDriver, {
 
     let config      = get(this, 'config');
     let configField = get(this, 'configField');
-    
+
     // for node pools
     set(this, "selectedNodePoolType", "")
     set(this, "selectedNodePoolObj", {});
@@ -143,7 +152,7 @@ export default Ember.Component.extend(ClusterDriver, {
         networkId: "",
         cniPlugin: "",
         firewallId: "",
-        region: "LON1",
+        region: "FRA1",
         kubernetesVersion: "1.18",
         nodePools: []
       });
@@ -168,29 +177,7 @@ export default Ember.Component.extend(ClusterDriver, {
         set(this, "errors", errors);
         cb(false);
       } else {
-        hash({
-          regions: this.linode.request(auth, 'regions'),
-          nodeTypes: this.linode.request(auth, 'linode/types'),
-          k8sVersions: this.linode.request(auth, 'lke/versions'),
-        }).then((responses) => {
-          this.setProperties({
-            errors: [],
-            step: 2,
-            regions: responses.regions.data.filter(region => (region.status === "ok" && region.capabilities.includes("Kubernetes"))),
-            nodeTypes: responses.nodeTypes.data.filter(type => (type.class !== 'nanode' && type.class !== 'gpu')),
-            k8sVersions: responses.k8sVersions.data,
-          });
-          cb(true);
-        }).catch((err) => {
-          if (err && err.body && err.body.errors && err.body.errors[0]) {
-            errors.push(`Error received from Linode: ${ err.body.errors[0].reason }`);
-          } else {
-            errors.push(`Error received from Linode`);
-          }
 
-          this.setProperties({ errors, });
-          cb(false);
-        });
       }
     },
     verifyClusterConfig(cb) {
@@ -203,7 +190,7 @@ export default Ember.Component.extend(ClusterDriver, {
       set(this, "step", 3);
       cb(true);
     },
-    
+
     createCluster(cb) {
       if (this.verifyNodePoolConfig()) {
         this.send("driverSave", cb);
@@ -329,6 +316,16 @@ export default Ember.Component.extend(ClusterDriver, {
   }),
   clusterConfigDetail: computed('intl.locale', 'langChanged', function() {
     return get(this, 'intl').t("clusterNew.civo.clusterConfig.description");
+  }),
+
+  regionChoices: Object.entries(regionMap).map((e) => ({
+    label: e[0],
+    value: e[1]
+  })),
+  selectedRegion: computed('cluster.%%DRIVERNAME%%EngineConfig.region', function() {
+    const region = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.region');
+
+    return region;
   }),
 
   // for region choises

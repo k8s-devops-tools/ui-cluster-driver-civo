@@ -63,7 +63,18 @@
               }}
             {{/input-or-display}}
           </div>
-          <div class="col span-6">
+
+        <div class="col span-6">
+          <label class="acc-label">{{t 'clusterNew.civo.region.label'}}{{field-required}}</label>
+          {{#input-or-display editable=(eq mode "new") value=selectedRegion}}
+          {{searchable-select class="form-control"
+                                content=regionChoices
+                                value=cluster.civoEngineConfig.region
+            }}
+          {{/input-or-display}}
+        </div>
+
+          {{!-- <div class="col span-6">
             <label class="acc-label">
               {{t "clusterNew.civo.region.label"}}
               {{field-required}}
@@ -78,7 +89,7 @@
                 value=cluster.civoEngineConfig.region
               }}
             {{/input-or-display}}
-          </div>
+          </div> --}}
           <div class="col span-6">
             <label class="acc-label">
               {{t "clusterNew.civo.networkId.label"}}
@@ -360,5 +371,9 @@
         }}
       {{/if}}
     {{/if}}
+
+  {{top-errors errors=errors}}
+  {{top-errors errors=otherErrors}}
+  {{top-errors errors=clusterErrors}}
   {{/accordion-list}}
 </section>
