@@ -242,7 +242,9 @@ export default Ember.Component.extend(ClusterDriver, {
   zoneResource:   null,
   instanceConfig:  '',
 
+  newTag:         '',
   selectedNodePoolType: '',
+  selectedNodePoolObj: {},
   selectedNodePoolList: [],
 
   step:            1,
@@ -471,20 +473,40 @@ export default Ember.Component.extend(ClusterDriver, {
     },
     // for node pools
     addSelectedNodePool() {
+      const tags = get(this, "selectedNodePoolList") || [];
+      const newTag = get(this, "newTag");
 
-      alert('blaat')
-      console.log('asdasdsad')
-      const selectedNodePoolObj = get(this, "selectedNodePoolType");
-      const selectedNodePoolList = get(this, "selectedNodePoolList");
-
-      if (selectedNodePoolObj.id) {
-        // add to list
-        selectedNodePoolList.pushObject(selectedNodePoolObj);
-
-        // clear selected
-        set(this, "selectedNodePoolType", "");
-        set(this, "selectedNodePoolObj", {});
+      let object = {
+        "label": "asdasdasd",
+        "count": 1
       }
+
+
+      console.log(tags)
+      console.log(newTag)
+
+      if (newTag) {
+        tags.pushObject(object);
+        set(this, "cluster.%%DRIVERNAME%%EngineConfig.selectedNodePoolList", tags);
+        set(this, "selectedNodePoolList", tags);
+        set(this, "newTag", "");
+      }
+
+
+
+      // alert('blaat')
+      // console.log('asdasdsad')
+      // const selectedNodePoolType = get(this, "selectedNodePoolType");
+      // const selectedNodePoolList = get(this, "selectedNodePoolList");
+
+      // if (selectedNodePoolType) {
+      //   // add to list
+      //   selectedNodePoolList.pushObject(selectedNodePoolObj);
+
+      //   // clear selected
+      //   set(this, "selectedNodePoolType", "");
+      //   set(this, "selectedNodePoolObj", {});
+      // }
     },
     deleteNodePool(id) {
       const selectedNodePoolList = get(this, "selectedNodePoolList");
@@ -506,19 +528,16 @@ export default Ember.Component.extend(ClusterDriver, {
 
         return;
       }
+
+      if (!this.verifyNodePoolConfig()) {
+        cb(false);
+      }
+
+
       if (!this.validate()) {
         cb(false);
 
         return;
-      }
-      if (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.nodeImage') == '') {
-        set(this, 'cluster.%%DRIVERNAME%%EngineConfig.nodeImage', imageMap['Oracle-Linux-7.6']);
-      }
-
-      if (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.subnetAccess') == 'public') {
-        set(this, 'cluster.%%DRIVERNAME%%EngineConfig.enablePrivateNodes', false);
-      } else {
-        set(this, 'cluster.%%DRIVERNAME%%EngineConfig.enablePrivateNodes', true);
       }
 
       this.send('driverSave', cb);
@@ -654,14 +673,18 @@ export default Ember.Component.extend(ClusterDriver, {
             get(this, 'cluster.%%DRIVERNAME%%EngineConfig.firewallId') ? false : true;
   }),
 
-  selectedNodePoolType: computed('cluster.%%DRIVERNAME%%EngineConfig.region', function() {
-    const nodePoolType = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.region');
+  selectedNodePoolType: computed('selectedNodePoolType', function() {
+
+
+    const nodePoolType = get(this, 'selectedNodePoolType');
+
+    console.log(nodePoolType)
 
     return nodePoolType;
   }),
 
-  canCreateCluster: computed('cluster.%%DRIVERNAME%%EngineConfig.nodeShape', function() {
-    return get(this, 'cluster.%%DRIVERNAME%%EngineConfig.nodeShape') ? false : true;
+  canCreateCluster: computed('cluster.%%DRIVERNAME%%EngineConfig.nodePools', function() {
+    return get(this, 'cluster.%%DRIVERNAME%%EngineConfig.nodePools') ? false : true;
   }),
 
   loadLanguage(lang) {
@@ -686,23 +709,23 @@ export default Ember.Component.extend(ClusterDriver, {
       errors.push('Name is required');
     }
 
-    const tenancyId = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.tenancyId');
+    // const tenancyId = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.tenancyId');
 
-    if (!tenancyId.startsWith('ocid1.tenancy')) {
-      errors.push('A valid tenancy OCID is required');
-    }
+    // if (!tenancyId.startsWith('ocid1.tenancy')) {
+    //   errors.push('A valid tenancy OCID is required');
+    // }
 
-    const compartmentId = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.compartmentId');
+    // const compartmentId = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.compartmentId');
 
-    if (!compartmentId.startsWith('ocid1.compartment') && !compartmentId.startsWith('ocid1.tenancy')) {
-      errors.push('A valid compartment OCID is required');
-    }
+    // if (!compartmentId.startsWith('ocid1.compartment') && !compartmentId.startsWith('ocid1.tenancy')) {
+    //   errors.push('A valid compartment OCID is required');
+    // }
 
-    const userOcid = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.userOcid');
+    // const userOcid = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.userOcid');
 
-    if (!userOcid.startsWith('ocid1.user')) {
-      errors.push('A valid user OCID is required');
-    }
+    // if (!userOcid.startsWith('ocid1.user')) {
+    //   errors.push('A valid user OCID is required');
+    // }
 
     // TODO Add more specific errors
 
@@ -715,6 +738,26 @@ export default Ember.Component.extend(ClusterDriver, {
     } else {
       set(this, 'errors', null);
 
+      return true;
+    }
+  },
+
+  verifyNodePoolConfig() {
+    const intl = get(this, 'intl');
+    const selectedNodePoolList = get(this, "selectedNodePoolList");
+    const errors = [];
+
+    if (selectedNodePoolList.length === 0) {
+      errors.push(intl.t("clusterNew.civo.nodePools.required"));
+      set(this, "errors", errors);
+      return false;
+    } else {
+      const fnd = selectedNodePoolList.find(np => np.count <= 0);
+      if (fnd) {
+        errors.push(intl.t("clusterNew.civo.nodePools.countError"));
+        set(this, "errors", errors);
+        return false;
+      }
       return true;
     }
   },
@@ -781,15 +824,15 @@ export default Ember.Component.extend(ClusterDriver, {
   //   });
   //   return [{label: intl.t("clusterNew.civo.nodePools.placeholder"), value: ""}, ...filteredAns];
   // }),
-  // setSelectedNodePoolObj: observer("selectedNodePoolType", async function() {
-  //   const nodePoolTypes = await get(this, "nodeTypes");
-  //   const selectedNodePoolType = get(this, "selectedNodePoolType");
+  setSelectedNodePoolObj: observer("selectedNodePoolType", async function() {
+    const nodePoolTypes = await get(this, "nodeTypes");
+    const selectedNodePoolType = get(this, "selectedNodePoolType");
 
-  //   if (selectedNodePoolType) {
-  //     const ans = nodePoolTypes.find(np => np.id === selectedNodePoolType);
-  //     set(this, "selectedNodePoolObj", {...ans, count: 1, memoryGb: ans.memory / 1024, diskGb: ans.disk / 1024});
-  //   } else set(this, "selectedNodePoolObj", {});
-  // }),
+    if (selectedNodePoolType) {
+      const ans = nodePoolTypes.find(np => np.id === selectedNodePoolType);
+      set(this, "selectedNodePoolObj", {...ans, count: 1, memoryGb: ans.memory / 1024, diskGb: ans.disk / 1024});
+    } else set(this, "selectedNodePoolObj", {});
+  }),
   setNodePools: observer("selectedNodePoolList.@each.count", function() {
     const selectedNodePoolList = get(this, "selectedNodePoolList");
     const nodePools = selectedNodePoolList.map(np => {
