@@ -582,18 +582,8 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
     canAuthenticate: computed('cluster.civoEngineConfig.apiKey', function () {
       return get(this, 'cluster.civoEngineConfig.apiKey') ? false : true;
     }),
-    canSaveVCN: computed('vcnCreationMode', 'cluster.civoEngineConfig.region', 'cluster.civoEngineConfig.networkId', 'cluster.civoEngineConfig.cniPlugin', 'cluster.civoEngineConfig.firewallId', function () {
-      const mode = get(this, 'vcnCreationMode');
-
-      if (mode === 'Quick') {
-        return false;
-      } else if (mode === 'Existing') {
-        return get(this, 'cluster.civoEngineConfig.vcnName') && get(this, 'cluster.civoEngineConfig.loadBalancerSubnetName1') ? false : true;
-      } else if (mode === 'Custom') {
-        return get(this, 'cluster.civoEngineConfig.subnetAccess') && get(this, 'cluster.civoEngineConfig.vcnCidr') ? false : true;
-      }
-
-      return true;
+    canSaveVCN: computed('cluster.civoEngineConfig.region', 'cluster.civoEngineConfig.networkId', 'cluster.civoEngineConfig.cniPlugin', 'cluster.civoEngineConfig.firewallId', function () {
+      return get(this, 'cluster.civoEngineConfig.region') ? false : true && get(this, 'cluster.civoEngineConfig.networkId') ? false : true && get(this, 'cluster.civoEngineConfig.cniPlugin') ? false : true && get(this, 'cluster.civoEngineConfig.firewallId') ? false : true;
     }),
     canCreateCluster: computed('cluster.civoEngineConfig.nodeShape', function () {
       return get(this, 'cluster.civoEngineConfig.nodeShape') ? false : true;

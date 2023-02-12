@@ -645,19 +645,11 @@ export default Ember.Component.extend(ClusterDriver, {
     return get(this, 'cluster.%%DRIVERNAME%%EngineConfig.apiKey') ? false : true;
   }),
 
-  canSaveVCN: computed('vcnCreationMode', 'cluster.%%DRIVERNAME%%EngineConfig.region', 'cluster.%%DRIVERNAME%%EngineConfig.networkId', 'cluster.%%DRIVERNAME%%EngineConfig.cniPlugin', 'cluster.%%DRIVERNAME%%EngineConfig.firewallId', function() {
-    const mode = get(this, 'vcnCreationMode');
-
-    if (mode === 'Quick') {
-      return false;
-    } else if (mode === 'Existing') {
-      // Driver will use the same compartment as the cluster if not set.
-      return (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.vcnName') && get(this, 'cluster.%%DRIVERNAME%%EngineConfig.loadBalancerSubnetName1')) ? false : true;
-    } else if (mode === 'Custom') {
-      return (get(this, 'cluster.%%DRIVERNAME%%EngineConfig.subnetAccess') && get(this, 'cluster.%%DRIVERNAME%%EngineConfig.vcnCidr')) ? false : true;
-    }
-
-    return true;
+  canSaveVCN: computed('cluster.%%DRIVERNAME%%EngineConfig.region', 'cluster.%%DRIVERNAME%%EngineConfig.networkId', 'cluster.%%DRIVERNAME%%EngineConfig.cniPlugin', 'cluster.%%DRIVERNAME%%EngineConfig.firewallId', function() {
+    return get(this, 'cluster.%%DRIVERNAME%%EngineConfig.region') ? false : true &&
+           get(this, 'cluster.%%DRIVERNAME%%EngineConfig.networkId') ? false : true &&
+           get(this, 'cluster.%%DRIVERNAME%%EngineConfig.cniPlugin') ? false : true &&
+            get(this, 'cluster.%%DRIVERNAME%%EngineConfig.firewallId') ? false : true;
   }),
   canCreateCluster: computed('cluster.%%DRIVERNAME%%EngineConfig.nodeShape', function() {
     return get(this, 'cluster.%%DRIVERNAME%%EngineConfig.nodeShape') ? false : true;
