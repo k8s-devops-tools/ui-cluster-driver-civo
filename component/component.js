@@ -43,47 +43,8 @@ const vcnIdMap = { quick: 'Quick Create', }
 const subnetAccessMap = { public: 'Public', private: 'Private', }
 
 const nodeShapeMap = {
-  'VM.Standard1.1':          'VM.Standard1.1',
-  'VM.Standard1.2':          'VM.Standard1.2',
-  'VM.Standard1.4':          'VM.Standard1.4',
-  'VM.Standard1.8':          'VM.Standard1.8',
-  'VM.Standard1.16':         'VM.Standard1.16',
-  'VM.Standard.B1.1':        'VM.Standard.B1.1',
-  'VM.Standard.B1.2':        'VM.Standard.B1.2',
-  'VM.Standard.B1.4':        'VM.Standard.B1.4',
-  'VM.Standard.B1.8':        'VM.Standard.B1.8',
-  'VM.Standard.B1.16':       'VM.Standard.B1.16',
-  'VM.Standard2.1':          'VM.Standard2.1',
-  'VM.Standard2.2':          'VM.Standard2.2',
-  'VM.Standard2.4':          'VM.Standard2.4',
-  'VM.Standard2.8':          'VM.Standard2.8',
-  'VM.Standard2.16':         'VM.Standard2.16',
-  'VM.Standard2.24':         'VM.Standard2.24',
-  'VM.Standard.E2.1.Micro':  'VM.Standard.E2.1.Micro',
-  'VM.Standard.E2.1':        'VM.Standard.E2.1',
-  'VM.Standard.E2.2':        'VM.Standard.E2.2',
-  'VM.Standard.E2.4':        'VM.Standard.E2.4',
-  'VM.Standard.E2.8':        'VM.Standard.E2.8',
-  'BM.Standard1.36':         'BM.Standard1.36',
-  'BM.Standard.B1.44':       'BM.Standard.B1.44',
-  'BM.Standard2.52':         'BM.Standard2.52',
-  'BM.Standard.E2.64':       'BM.Standard.E2.64',
-  'BM.Standard.E3.128':      'BM.Standard.E3.128',
-  'VM.DenseIO2.8':           'VM.DenseIO2.8',
-  'VM.DenseIO2.16':          'VM.DenseIO2.16',
-  'VM.DenseIO2.24':          'VM.DenseIO2.24',
-  'BM.DenseIO2.52':          'BM.DenseIO2.52',
-  'BM.HPC2.36':              'BM.HPC2.36',
-  'VM.GPU2.1':               'VM.GPU2.1',
-  'VM.GPU3.1':               'VM.GPU3.1',
-  'VM.GPU3.2':               'VM.GPU3.2',
-  'VM.GPU3.4':               'VM.GPU3.4',
-}
-
-const imageMap = {
-  'Oracle-Linux-7.6': 'Oracle-Linux-7.6',
-  'Oracle-Linux-7.5': 'Oracle-Linux-7.5',
-  'Oracle-Linux-7.4': 'Oracle-Linux-7.4',
+  'g3.xsmall':          'g3.xsmall',
+  'g3.small':          'g3.small',
 }
 
 const languages = {
@@ -244,7 +205,9 @@ export default Ember.Component.extend(ClusterDriver, {
 
   newTag:         '',
   selectedNodePoolType: '',
-  selectedNodePoolObj: {},
+  selectedNodePoolObj: {
+
+  },
   selectedNodePoolList: [],
 
   step:            1,
@@ -286,14 +249,8 @@ export default Ember.Component.extend(ClusterDriver, {
         cniPlugin: "",
         firewallId: "",
         region: "LON1",
-        kubernetesVersion: "1.18",
+        kubernetesVersion: "1.25.0-k3s1",
         nodePools: [],
-
-
-        clusterName:       '',
-        vcnCidr:           '10.0.0.0/16',
-        kubernetesVersion: 'v1.17.9',
-        region:            'us-phoenix-1',
         quantityPerSubnet: 1,
       });
 
@@ -474,10 +431,13 @@ export default Ember.Component.extend(ClusterDriver, {
     // for node pools
     addSelectedNodePool() {
       const tags = get(this, "selectedNodePoolList") || [];
+
+      const selectedNodePoolType = get(this, "selectedNodePoolType");
+
       const newTag = get(this, "newTag");
 
       let object = {
-        "label": "asdasdasd",
+        "id": selectedNodePoolType,
         "count": 1
       }
 
@@ -496,7 +456,7 @@ export default Ember.Component.extend(ClusterDriver, {
 
       // alert('blaat')
       // console.log('asdasdsad')
-      // const selectedNodePoolType = get(this, "selectedNodePoolType");
+
       // const selectedNodePoolList = get(this, "selectedNodePoolList");
 
       // if (selectedNodePoolType) {
