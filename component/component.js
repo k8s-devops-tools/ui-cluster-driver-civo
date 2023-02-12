@@ -472,6 +472,9 @@ export default Ember.Component.extend(ClusterDriver, {
     },
     // for node pools
     addSelectedNodePool() {
+
+      alert('blaat')
+      console.log('asdasdsad')
       const selectedNodePoolObj = get(this, "selectedNodePoolObj");
       const selectedNodePoolList = get(this, "selectedNodePoolList");
 
