@@ -312,6 +312,8 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
         const intl = get(this, 'intl');
         const quantityPerSubnet = get(this, 'cluster.civoEngineConfig.quantityPerSubnet');
         const kubernetesVersion = get(this, 'cluster.civoEngineConfig.kubernetesVersion');
+        console.log(quantityPerSubnet);
+        console.log(kubernetesVersion);
 
         if (!quantityPerSubnet) {
           errors.push(intl.t('clusterNew.civo.quantityPerSubnet.required'));
@@ -329,16 +331,15 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
           errors.push(intl.t('clusterNew.civo.version.required'));
         }
 
+        console.log(errors);
+
         if (errors.length > 0) {
           set(this, 'errors', errors);
           cb();
           return;
         }
 
-        setProperties(this, {
-          'cluster.civoEngineConfig.kubernetesVersion': quantityPerSubnet,
-          'cluster.civoEngineConfig.quantityPerSubnet': kubernetesVersion
-        });
+        setProperties(this, {});
         set(this, 'step', 3);
         cb(true);
       },
@@ -511,6 +512,7 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
     }),
     selectedk8sVersion: computed('cluster.civoEngineConfig.kubernetesVersion', function () {
       const k8sVersion = get(this, 'cluster.civoEngineConfig.kubernetesVersion');
+      console.log(k8sVersion);
       return k8sVersion && k8sVersionMap[k8sVersion];
     }),
     canAuthenticate: computed('cluster.civoEngineConfig.apiKey', function () {

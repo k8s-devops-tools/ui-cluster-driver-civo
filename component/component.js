@@ -350,6 +350,9 @@ export default Ember.Component.extend(ClusterDriver, {
       const quantityPerSubnet = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.quantityPerSubnet');
       const kubernetesVersion = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.kubernetesVersion');
 
+      console.log(quantityPerSubnet)
+      console.log(kubernetesVersion)
+
       if (!quantityPerSubnet) {
         errors.push(intl.t('clusterNew.civo.quantityPerSubnet.required'));
       } else {
@@ -363,6 +366,8 @@ export default Ember.Component.extend(ClusterDriver, {
         errors.push(intl.t('clusterNew.civo.version.required'));
       }
 
+      console.log(errors)
+
       if (errors.length > 0) {
         set(this, 'errors', errors);
         cb();
@@ -372,8 +377,8 @@ export default Ember.Component.extend(ClusterDriver, {
 
 
       setProperties(this, {
-        'cluster.%%DRIVERNAME%%EngineConfig.kubernetesVersion':   quantityPerSubnet,
-        'cluster.%%DRIVERNAME%%EngineConfig.quantityPerSubnet':   kubernetesVersion,
+        // 'cluster.%%DRIVERNAME%%EngineConfig.kubernetesVersion':   quantityPerSubnet,
+        // 'cluster.%%DRIVERNAME%%EngineConfig.quantityPerSubnet':   kubernetesVersion,
       });
 
 
@@ -576,6 +581,9 @@ export default Ember.Component.extend(ClusterDriver, {
   }),
   selectedk8sVersion: computed('cluster.%%DRIVERNAME%%EngineConfig.kubernetesVersion', function() {
     const k8sVersion = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.kubernetesVersion');
+
+    console.log(k8sVersion)
+
     return k8sVersion && k8sVersionMap[k8sVersion];
   }),
   canAuthenticate: computed('cluster.%%DRIVERNAME%%EngineConfig.apiKey', function() {
