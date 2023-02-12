@@ -683,7 +683,7 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
           console.log(np);
           const [npId, cnt] = np.split("=");
           console.log(npId, cnt);
-          const fnd = nodePoolTypes[npt.size];
+          const fnd = nodePoolTypes[npId];
 
           if (fnd) {
             return { ...fnd,

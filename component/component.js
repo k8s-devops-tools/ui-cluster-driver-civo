@@ -818,7 +818,7 @@ console.log("ans", ans)
 
         console.log(npId, cnt)
 
-        const fnd = nodePoolTypes[npt.size];
+        const fnd = nodePoolTypes[npId];
         if (fnd) {
           return {...fnd, count: cnt};
         } else return { id: npId, count: cnt, label: npId};
