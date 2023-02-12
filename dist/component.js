@@ -276,11 +276,6 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
           vcnCidr: '10.0.0.0/16',
           kubernetesVersion: 'v1.17.9',
           region: 'us-phoenix-1',
-          vcn: '',
-          securityListId: '',
-          subnetAccess: 'public',
-          cpu: 0,
-          memory: 0,
           quantityPerSubnet: 1
         });
         set(this, 'cluster.civoEngineConfig', config);
@@ -381,11 +376,50 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
           return;
         }
 
+        setProperties(this, {
+          'cluster.civoEngineConfig.kubernetesVersion': quantityPerSubnet,
+          'cluster.civoEngineConfig.quantityPerSubnet': kubernetesVersion
+        });
         set(this, 'step', 3);
         cb(true);
       },
 
       loadInstanceConfig(cb) {
+        const errors = get(this, 'errors') || [];
+        const intl = get(this, 'intl');
+        const region = get(this, 'cluster.civoEngineConfig.region');
+        const networkId = get(this, 'cluster.civoEngineConfig.networkId');
+        const cniPlugin = get(this, 'cluster.civoEngineConfig.cniPlugin');
+        const firewallId = get(this, 'cluster.civoEngineConfig.firewallId');
+
+        if (!region) {
+          errors.push(intl.t('clusterNew.civo.region.required'));
+        } else {
+          const maxNodeCount = get(this, 'cluster.civoEngineConfig.maxNodeCount');
+
+          if (!/^\d+$/.test(quantityPerSubnet) || parseInt(quantityPerSubnet, 10) < 0 || parseInt(quantityPerSubnet, 10) > maxNodeCount) {
+            errors.push(intl.t('clusterNew.civo.quantityPerSubnet.error', {
+              max: maxNodeCount
+            }));
+          }
+        }
+
+        if (!networkId) {
+          errors.push(intl.t('clusterNew.civo.networkId.required'));
+        }
+
+        if (errors.length > 0) {
+          set(this, 'errors', errors);
+          cb();
+          return;
+        }
+
+        setProperties(this, {
+          'cluster.civoEngineConfig.region': region,
+          'cluster.civoEngineConfig.networkId': networkId,
+          'cluster.civoEngineConfig.cniPlugin': cniPlugin,
+          'cluster.civoEngineConfig.firewallId': firewallId
+        });
         set(this, 'errors', null);
         set(this, 'step', 4);
         cb(true);
@@ -556,7 +590,7 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
     canAuthenticate: computed('cluster.civoEngineConfig.apiKey', function () {
       return get(this, 'cluster.civoEngineConfig.apiKey') ? false : true;
     }),
-    canSaveVCN: computed('vcnCreationMode', 'cluster.civoEngineConfig.vcnName', 'cluster.civoEngineConfig.loadBalancerSubnetName1', 'cluster.civoEngineConfig.loadBalancerSubnetName2', 'cluster.civoEngineConfig.subnetAccess', 'cluster.civoEngineConfig.vcnCidr', function () {
+    canSaveVCN: computed('vcnCreationMode', 'cluster.civoEngineConfig.region', 'cluster.civoEngineConfig.networkId', 'cluster.civoEngineConfig.cniPlugin', 'cluster.civoEngineConfig.firewallId', function () {
       const mode = get(this, 'vcnCreationMode');
 
       if (mode === 'Quick') {

@@ -293,11 +293,6 @@ export default Ember.Component.extend(ClusterDriver, {
         vcnCidr:           '10.0.0.0/16',
         kubernetesVersion: 'v1.17.9',
         region:            'us-phoenix-1',
-        vcn:               '',
-        securityListId:    '',
-        subnetAccess:      'public',
-        cpu:               0,
-        memory:            0,
         quantityPerSubnet: 1,
       });
 
@@ -417,7 +412,10 @@ export default Ember.Component.extend(ClusterDriver, {
       }
 
 
-
+      setProperties(this, {
+        'cluster.%%DRIVERNAME%%EngineConfig.kubernetesVersion':   quantityPerSubnet,
+        'cluster.%%DRIVERNAME%%EngineConfig.quantityPerSubnet':   kubernetesVersion,
+      });
 
 
       set(this, 'step', 3);
@@ -426,6 +424,43 @@ export default Ember.Component.extend(ClusterDriver, {
 
     // TODO implement loadInstanceConfig
     loadInstanceConfig(cb) {
+      let errors = get(this, 'errors') || [];
+      let intl = get(this, 'intl');
+
+      const region = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.region');
+      const networkId = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.networkId');
+      const cniPlugin = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.cniPlugin');
+      const firewallId = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.firewallId');
+
+      if (!region) {
+        errors.push(intl.t('clusterNew.civo.region.required'));
+      } else {
+        // const maxNodeCount = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.maxNodeCount');
+
+        // if (!/^\d+$/.test(quantityPerSubnet) || parseInt(quantityPerSubnet, 10) < 0 || parseInt(quantityPerSubnet, 10) > maxNodeCount) {
+        //   errors.push(intl.t('clusterNew.civo.quantityPerSubnet.error', { max: maxNodeCount }));
+        // }
+      }
+      if (!networkId) {
+        errors.push(intl.t('clusterNew.civo.networkId.required'));
+      }
+
+      if (errors.length > 0) {
+        set(this, 'errors', errors);
+        cb();
+
+        return;
+      }
+
+
+      setProperties(this, {
+        'cluster.%%DRIVERNAME%%EngineConfig.region':      region,
+        'cluster.%%DRIVERNAME%%EngineConfig.networkId':   networkId,
+        'cluster.%%DRIVERNAME%%EngineConfig.cniPlugin':   cniPlugin,
+        'cluster.%%DRIVERNAME%%EngineConfig.firewallId':   firewallId,
+      });
+
+
       set(this, 'errors', null);
       set(this, 'step', 4);
       cb(true);
@@ -610,7 +645,7 @@ export default Ember.Component.extend(ClusterDriver, {
     return get(this, 'cluster.%%DRIVERNAME%%EngineConfig.apiKey') ? false : true;
   }),
 
-  canSaveVCN: computed('vcnCreationMode', 'cluster.%%DRIVERNAME%%EngineConfig.vcnName', 'cluster.%%DRIVERNAME%%EngineConfig.loadBalancerSubnetName1', 'cluster.%%DRIVERNAME%%EngineConfig.loadBalancerSubnetName2', 'cluster.%%DRIVERNAME%%EngineConfig.subnetAccess', 'cluster.%%DRIVERNAME%%EngineConfig.vcnCidr', function() {
+  canSaveVCN: computed('vcnCreationMode', 'cluster.%%DRIVERNAME%%EngineConfig.region', 'cluster.%%DRIVERNAME%%EngineConfig.networkId', 'cluster.%%DRIVERNAME%%EngineConfig.cniPlugin', 'cluster.%%DRIVERNAME%%EngineConfig.firewallId', function() {
     const mode = get(this, 'vcnCreationMode');
 
     if (mode === 'Quick') {
