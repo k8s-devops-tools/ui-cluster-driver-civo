@@ -680,6 +680,19 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
       if (nodePools && nodePools.length) {
         set(this, "selectedNodePoolList", nodePools.map(np => {
           console.log(np);
+          const [npId, cnt] = np.split("=");
+          console.log(npId, cnt);
+          const fnd = nodePoolTypes.find(npt => npt.size === npId);
+
+          if (fnd) {
+            return { ...fnd,
+              count: cnt
+            };
+          } else return {
+            id: npId,
+            count: cnt,
+            label: npId
+          };
         }));
       } else {
         set(this, "selectedNodePoolList", []);
