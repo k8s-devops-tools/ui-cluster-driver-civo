@@ -436,13 +436,16 @@ export default Ember.Component.extend(ClusterDriver, {
 
       const newTag = get(this, "newTag");
 
-      let object = {
-        "id": selectedNodePoolType,
-        "count": 1
-      }
+      console.log(selectedNodePoolType)
+      console.log(newTag)
+
+      let object = EmberObject.create({
+        id: selectedNodePoolType,
+        count:1
+      })
 
 
-      console.log(tags)
+      console.log(object)
       console.log(newTag)
 
       if (newTag) {
