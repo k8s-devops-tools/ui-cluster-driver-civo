@@ -801,15 +801,21 @@ console.log("ans", ans)
 
   async prefillSelectedNodePoolList() {
     const nodePools = get(this, "cluster.%%DRIVERNAME%%EngineConfig.nodePools");
+
+    console.log(nodePools)
+    // const ans = nodeShapeMap[selectedNodePoolType]
     const nodePoolTypes = await get(this, "nodeTypes");
 
     if (nodePools && nodePools.length) {
       set(this, "selectedNodePoolList", nodePools.map(np => {
-        const [npId, cnt] = np.split("=");
-        const fnd = nodePoolTypes.find(npt => npt.id === npId);
-        if (fnd) {
-          return {...fnd, count: cnt};
-        } else return {id: npId, count: cnt, label: npId};
+
+        console.log(np)
+
+        // const [npId, cnt] = np.split("=");
+        // const fnd = nodePoolTypes.find(npt => npt.size === npId);
+        // if (fnd) {
+        //   return {...fnd, count: cnt};
+        // } else return {id: npId, count: cnt, label: npId};
       }));
     } else {
       set(this, "selectedNodePoolList", []);

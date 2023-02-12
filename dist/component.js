@@ -674,22 +674,12 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
 
     async prefillSelectedNodePoolList() {
       const nodePools = get(this, "cluster.civoEngineConfig.nodePools");
+      console.log(nodePools);
       const nodePoolTypes = await get(this, "nodeTypes");
 
       if (nodePools && nodePools.length) {
         set(this, "selectedNodePoolList", nodePools.map(np => {
-          const [npId, cnt] = np.split("=");
-          const fnd = nodePoolTypes.find(npt => npt.id === npId);
-
-          if (fnd) {
-            return { ...fnd,
-              count: cnt
-            };
-          } else return {
-            id: npId,
-            count: cnt,
-            label: npId
-          };
+          console.log(np);
         }));
       } else {
         set(this, "selectedNodePoolList", []);
