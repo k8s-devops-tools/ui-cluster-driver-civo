@@ -381,23 +381,18 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
       },
 
       addSelectedNodePool() {
+        const selectedNodePoolObj = get(this, "selectedNodePoolObj");
         const tags = get(this, "selectedNodePoolList") || [];
         const selectedNodePoolType = get(this, "selectedNodePoolType");
-        const newTag = get(this, "newTag");
+        console.log(selectedNodePoolObj);
         console.log(selectedNodePoolType);
-        console.log(newTag);
-        let object = EmberObject.create({
-          id: selectedNodePoolType,
-          count: 1
-        });
-        console.log(object);
-        console.log(newTag);
 
-        if (newTag) {
-          tags.pushObject(object);
+        if (selectedNodePoolObj) {
+          tags.pushObject(selectedNodePoolObj);
           set(this, "cluster.civoEngineConfig.selectedNodePoolList", tags);
           set(this, "selectedNodePoolList", tags);
-          set(this, "newTag", "");
+          set(this, "selectedNodePoolType", "");
+          set(this, "selectedNodePoolObj", {});
         }
       },
 
@@ -621,27 +616,30 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
       label: e[1],
       value: e[0]
     })),
-    setSelectedNodePoolObj: computed('cluster.civoEngineConfig.nodeShape', function () {
-      const nodeShape = get(this, 'cluster.civoEngineConfig.nodeShape');
-      return nodeShape && nodeShapeMap[nodeShape];
-    }),
     setSelectedNodePoolObj: observer("selectedNodePoolType", async function () {
-      const nodePoolTypes = await get(this, "nodeTypes");
       const selectedNodePoolType = get(this, "selectedNodePoolType");
 
       if (selectedNodePoolType) {
-        const ans = nodePoolTypes.find(np => np.id === selectedNodePoolType);
-        set(this, "selectedNodePoolObj", { ...ans,
+        let id = this.uuidv4();
+        console.log(nodeShapeMap);
+        const ans = nodeShapeMap[selectedNodePoolType];
+        console.log("ans", ans);
+        set(this, "selectedNodePoolObj", {
+          id: id,
           count: 1,
-          memoryGb: ans.memory / 1024,
-          diskGb: ans.disk / 1024
+          size: ans
         });
       } else set(this, "selectedNodePoolObj", {});
     }),
+
+    uuidv4() {
+      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+    },
+
     setNodePools: observer("selectedNodePoolList.@each.count", function () {
       const selectedNodePoolList = get(this, "selectedNodePoolList");
       const nodePools = selectedNodePoolList.map(np => {
-        return `${np.id}=${np.count}`;
+        return `${np.id}=${np.size}-${np.count}`;
       });
       set(this, "cluster.civoEngineConfig.nodePools", nodePools);
     }),
