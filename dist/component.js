@@ -675,7 +675,7 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
     async prefillSelectedNodePoolList() {
       const nodePools = get(this, "cluster.civoEngineConfig.nodePools");
       console.log(nodePools);
-      const nodePoolTypes = await get(this, "nodeTypes");
+      const nodePoolTypes = nodeShapeMap;
 
       if (nodePools && nodePools.length) {
         set(this, "selectedNodePoolList", nodePools.map(np => {

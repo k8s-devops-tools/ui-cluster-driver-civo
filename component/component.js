@@ -804,7 +804,7 @@ console.log("ans", ans)
 
     console.log(nodePools)
     // const ans = nodeShapeMap[selectedNodePoolType]
-    const nodePoolTypes = await get(this, "nodeTypes");
+    const nodePoolTypes = nodeShapeMap
 
     if (nodePools && nodePools.length) {
       set(this, "selectedNodePoolList", nodePools.map(np => {
