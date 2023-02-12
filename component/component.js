@@ -243,7 +243,6 @@ export default Ember.Component.extend(ClusterDriver, {
   instanceConfig:  '',
 
   selectedNodePoolType: '',
-  selectedNodePoolObj: {},
   selectedNodePoolList: [],
 
   step:            1,
@@ -475,7 +474,7 @@ export default Ember.Component.extend(ClusterDriver, {
 
       alert('blaat')
       console.log('asdasdsad')
-      const selectedNodePoolObj = get(this, "selectedNodePoolObj");
+      const selectedNodePoolObj = get(this, "selectedNodePoolType");
       const selectedNodePoolList = get(this, "selectedNodePoolList");
 
       if (selectedNodePoolObj.id) {
@@ -654,6 +653,13 @@ export default Ember.Component.extend(ClusterDriver, {
            get(this, 'cluster.%%DRIVERNAME%%EngineConfig.cniPlugin') ? false : true &&
             get(this, 'cluster.%%DRIVERNAME%%EngineConfig.firewallId') ? false : true;
   }),
+
+  selectedNodePoolType: computed('cluster.%%DRIVERNAME%%EngineConfig.region', function() {
+    const nodePoolType = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.region');
+
+    return nodePoolType;
+  }),
+
   canCreateCluster: computed('cluster.%%DRIVERNAME%%EngineConfig.nodeShape', function() {
     return get(this, 'cluster.%%DRIVERNAME%%EngineConfig.nodeShape') ? false : true;
   }),

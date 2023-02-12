@@ -234,7 +234,6 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
     zoneResource: null,
     instanceConfig: '',
     selectedNodePoolType: '',
-    selectedNodePoolObj: {},
     selectedNodePoolList: [],
     step: 1,
     lanChanged: null,
@@ -424,7 +423,7 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
       addSelectedNodePool() {
         alert('blaat');
         console.log('asdasdsad');
-        const selectedNodePoolObj = get(this, "selectedNodePoolObj");
+        const selectedNodePoolObj = get(this, "selectedNodePoolType");
         const selectedNodePoolList = get(this, "selectedNodePoolList");
 
         if (selectedNodePoolObj.id) {
@@ -586,6 +585,10 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
     }),
     canSaveVCN: computed('cluster.civoEngineConfig.region', 'cluster.civoEngineConfig.networkId', 'cluster.civoEngineConfig.cniPlugin', 'cluster.civoEngineConfig.firewallId', function () {
       return get(this, 'cluster.civoEngineConfig.region') ? false : true && get(this, 'cluster.civoEngineConfig.networkId') ? false : true && get(this, 'cluster.civoEngineConfig.cniPlugin') ? false : true && get(this, 'cluster.civoEngineConfig.firewallId') ? false : true;
+    }),
+    selectedNodePoolType: computed('cluster.civoEngineConfig.region', function () {
+      const nodePoolType = get(this, 'cluster.civoEngineConfig.region');
+      return nodePoolType;
     }),
     canCreateCluster: computed('cluster.civoEngineConfig.nodeShape', function () {
       return get(this, 'cluster.civoEngineConfig.nodeShape') ? false : true;
