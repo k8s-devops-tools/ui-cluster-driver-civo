@@ -806,6 +806,9 @@ console.log("ans", ans)
     // const ans = nodeShapeMap[selectedNodePoolType]
     const nodePoolTypes = nodeShapeMap
 
+
+    console.log(nodePoolTypes)
+
     if (nodePools && nodePools.length) {
       set(this, "selectedNodePoolList", nodePools.map(np => {
 
@@ -815,7 +818,7 @@ console.log("ans", ans)
 
         console.log(npId, cnt)
 
-        const fnd = nodePoolTypes.find(npt => npt.size === npId);
+        const fnd = nodePoolTypes[npt.size];
         if (fnd) {
           return {...fnd, count: cnt};
         } else return { id: npId, count: cnt, label: npId};

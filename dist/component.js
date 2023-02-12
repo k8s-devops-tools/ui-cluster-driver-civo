@@ -676,13 +676,14 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
       const nodePools = get(this, "cluster.civoEngineConfig.nodePools");
       console.log(nodePools);
       const nodePoolTypes = nodeShapeMap;
+      console.log(nodePoolTypes);
 
       if (nodePools && nodePools.length) {
         set(this, "selectedNodePoolList", nodePools.map(np => {
           console.log(np);
           const [npId, cnt] = np.split("=");
           console.log(npId, cnt);
-          const fnd = nodePoolTypes.find(npt => npt.size === npId);
+          const fnd = nodePoolTypes[npt.size];
 
           if (fnd) {
             return { ...fnd,
