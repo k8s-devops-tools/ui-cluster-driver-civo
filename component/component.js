@@ -43,8 +43,8 @@ const vcnIdMap = { quick: 'Quick Create', }
 const subnetAccessMap = { public: 'Public', private: 'Private', }
 
 const nodeShapeMap = {
-  'g3.xsmall':          'g3.xsmall',
-  'g3.small':          'g3.small',
+  'g4s.kube.xsmall':          'g4s.kube.xsmall',
+  'g4s.kube.small':          'g4s.kube.small',
 }
 
 const languages = {

@@ -37,8 +37,8 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
     private: 'Private'
   };
   const nodeShapeMap = {
-    'g3.xsmall': 'g3.xsmall',
-    'g3.small': 'g3.small'
+    'g4s.kube.xsmall': 'g4s.kube.xsmall',
+    'g4s.kube.small': 'g4s.kube.small'
   };
   const languages = {
     'en-us': {
