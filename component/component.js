@@ -561,24 +561,6 @@ export default Ember.Component.extend(ClusterDriver, {
 
     return region;
   }),
-  vcnChoices: Object.entries(vcnIdMap).map((e) => ({
-    label: e[1],
-    value: e[0]
-  })),
-  selectedVCN: computed('cluster.%%DRIVERNAME%%EngineConfig.vcnId', function() {
-    const vcnId = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.vcnId');
-
-    return vcnId && vcnIdMap[vcnId];
-  }),
-  subnetAccessChoices: Object.entries(subnetAccessMap).map((e) => ({
-    label: e[1],
-    value: e[0]
-  })),
-  selectedSubnetAccess: computed('cluster.%%DRIVERNAME%%EngineConfig.subnetAccess', function() {
-    const subnetAccess = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.subnetAccess');
-
-    return subnetAccess && subnetAccessMap[subnetAccess];
-  }),
   nodeShapeChoices: Object.entries(nodeShapeMap).map((e) => ({
     label: e[1],
     value: e[0]
@@ -587,15 +569,6 @@ export default Ember.Component.extend(ClusterDriver, {
     const nodeShape = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.nodeShape');
 
     return nodeShape && nodeShapeMap[nodeShape];
-  }),
-  imageChoices: Object.entries(imageMap).map((e) => ({
-    label: e[1],
-    value: e[0]
-  })),
-  selectedImage: computed('cluster.%%DRIVERNAME%%EngineConfig.nodeImage', function() {
-    const nodeImage = get(this, 'cluster.%%DRIVERNAME%%EngineConfig.nodeImage');
-
-    return nodeImage && imageMap[nodeImage];
   }),
   k8sVersionChoices: Object.entries(k8sVersionMap).map((e) => ({
     label: e[1],

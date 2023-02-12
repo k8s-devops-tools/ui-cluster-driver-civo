@@ -488,22 +488,6 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
       const region = get(this, 'cluster.civoEngineConfig.region');
       return region;
     }),
-    vcnChoices: Object.entries(vcnIdMap).map(e => ({
-      label: e[1],
-      value: e[0]
-    })),
-    selectedVCN: computed('cluster.civoEngineConfig.vcnId', function () {
-      const vcnId = get(this, 'cluster.civoEngineConfig.vcnId');
-      return vcnId && vcnIdMap[vcnId];
-    }),
-    subnetAccessChoices: Object.entries(subnetAccessMap).map(e => ({
-      label: e[1],
-      value: e[0]
-    })),
-    selectedSubnetAccess: computed('cluster.civoEngineConfig.subnetAccess', function () {
-      const subnetAccess = get(this, 'cluster.civoEngineConfig.subnetAccess');
-      return subnetAccess && subnetAccessMap[subnetAccess];
-    }),
     nodeShapeChoices: Object.entries(nodeShapeMap).map(e => ({
       label: e[1],
       value: e[0]
@@ -511,14 +495,6 @@ define("shared/components/cluster-driver/driver-civo/component", ["exports", "sh
     selectednodeShape: computed('cluster.civoEngineConfig.nodeShape', function () {
       const nodeShape = get(this, 'cluster.civoEngineConfig.nodeShape');
       return nodeShape && nodeShapeMap[nodeShape];
-    }),
-    imageChoices: Object.entries(imageMap).map(e => ({
-      label: e[1],
-      value: e[0]
-    })),
-    selectedImage: computed('cluster.civoEngineConfig.nodeImage', function () {
-      const nodeImage = get(this, 'cluster.civoEngineConfig.nodeImage');
-      return nodeImage && imageMap[nodeImage];
     }),
     k8sVersionChoices: Object.entries(k8sVersionMap).map(e => ({
       label: e[1],
