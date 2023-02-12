@@ -447,7 +447,7 @@ export default Ember.Component.extend(ClusterDriver, {
 
       if (errors.length > 0) {
         set(this, 'errors', errors);
-        cb();
+        cb(false);
 
         return;
       }

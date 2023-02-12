@@ -56,7 +56,7 @@
 
     <div class="col span-4">
       <label class="acc-label">{{t 'clusterNew.civo.version.label'}}</label>
-      {{#input-or-display editable=(or (eq mode "new") eq mode "editing") value=selectedk8sVersion}}
+      {{#input-or-display editable=(and (eq step 2) isNew) value=selectedk8sVersion}}
       {{new-select class="form-control"
                            content=k8sUpgradeVersionChoices
                            value=cluster.civoEngineConfig.kubernetesVersion
@@ -202,22 +202,6 @@
                 classNames="form-control"
                 placeholder=(t "clusterNew.civo.firewallId.placeholder")
                 value=cluster.civoEngineConfig.firewallId
-              }}
-            {{/input-or-display}}
-          </div>
-          <div class="col span-6">
-            <label class="acc-label">
-              {{t "clusterNew.civo.kubernetesVersion.label"}}
-              {{field-required}}
-            </label>
-            {{#input-or-display
-              editable=true
-              value=cluster.civoEngineConfig.kubernetesVersion
-            }}
-              {{new-select
-                class="form-control"
-                content=k8sVersionChoises
-                value=cluster.civoEngineConfig.kubernetesVersion
               }}
             {{/input-or-display}}
           </div>
